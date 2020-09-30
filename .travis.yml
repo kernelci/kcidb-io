@@ -1,0 +1,15 @@
+language: python
+dist: xenial
+python:
+    - "3.6"
+install:
+    - pip3 install '.[dev]'
+before_script:
+    - git clone --depth=1 https://github.com/kernelci/kcidb.git .kcidb
+    - git -C .kcidb log -n1
+script:
+    - "flake8 kcidb_io *.py"
+    - "pylint kcidb_io *.py"
+    - pytest
+    - pip3 install .kcidb
+    - pytest .kcidb
