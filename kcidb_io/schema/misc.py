@@ -194,14 +194,11 @@ class Version:
         Returns:
             The upgraded and validated data.
         """
-        # Check for "previous" outside except block to avoid re-raising
-        if self.previous:
-            try:
-                data = self.validate_exactly(data)
-            except jsonschema.exceptions.ValidationError:
-                if copy:
-                    data = deepcopy(data)
-                data = self.previous.upgrade(data, copy=False)
-                if self.inherit:
-                    data = self.inherit(data)
+        if not self.is_compatible_exactly(data) and \
+           self.previous and self.previous.is_compatible(data):
+            if copy:
+                data = deepcopy(data)
+            data = self.previous.upgrade(data, copy=False)
+            if self.inherit:
+                data = self.inherit(data)
         return self.validate_exactly(data)
