@@ -7,34 +7,40 @@ import jsonschema
 class Version:
     """A version of the schema"""
     # pylint: disable=too-many-arguments
-    def __init__(self, major, minor, json, tree, previous=None, inherit=None):
+    def __init__(self, major, minor, json, tree, get_version,
+                 previous=None, inherit=None):
         """
         Initialize the version.
 
         Args:
-            major:      The major version number. A non-negative integer.
-                        Increases represent backward-incompatible changes.
-                        E.g. deleting or renaming a property, changing a
-                        property type, restricting values, making a property
-                        required, or adding a new required property.
-            minor:      The minor version number. A non-negative integer.
-                        Increases represent backward-compatible changes. E.g.
-                        relaxing value restrictions, making a property
-                        optional, or adding a new optional property.
-            json:       The JSON schema for this version.
-            tree:       A tree of parent-child relationships for objects in
-                        data's top-level lists, expressed as a dictionary of
-                        object list names to a list of the same, with the
-                        empty string mapping to a list of topmost object list
-                        names.
-            previous:   The previous schema version, or None if none.
-                        Must have lower major number, if not None.
-            inherit:    The data inheritance function. Must accept data
-                        adhering to the "previous" version of the schema as
-                        the only argument, and return the data adhering to
-                        this version. Can modify the argument. Can be None,
-                        meaning no transformation needed. Must be None if
-                        "previous" is None.
+            major:          The major version number. A non-negative integer.
+                            Increases represent backward-incompatible changes.
+                            E.g. deleting or renaming a property, changing a
+                            property type, restricting values, making a
+                            property required, or adding a new required
+                            property.
+            minor:          The minor version number. A non-negative integer.
+                            Increases represent backward-compatible changes.
+                            E.g. relaxing value restrictions, making a
+                            property optional, or adding a new optional
+                            property.
+            json:           The JSON schema for this version.
+            tree:           A tree of parent-child relationships for objects
+                            in data's top-level lists, expressed as a
+                            dictionary of object list names to a list of the
+                            same, with the empty string mapping to a list of
+                            topmost object list names.
+            get_version:    A function retrieving both the major and the minor
+                            version numbers from a data, or returning (None,
+                            None) if it is not found in the data.
+            previous:       The previous schema version, or None if none.
+                            Must have lower major number, if not None.
+            inherit:        The data inheritance function. Must accept data
+                            adhering to the "previous" version of the schema
+                            as the only argument, and return the data adhering
+                            to this version. Can modify the argument. Can be
+                            None, meaning no transformation needed. Must be
+                            None if "previous" is None.
         """
         assert isinstance(major, int) and major >= 0
         assert isinstance(minor, int) and minor >= 0
@@ -50,10 +56,57 @@ class Version:
 
         self.major = major
         self.minor = minor
-        self.previous = previous
         self.json = json
         self.tree = tree
+        self.get_version = get_version
+        self.previous = previous
         self.inherit = inherit
+
+    def is_compatible_exactly(self, data):
+        """
+        Check if a data's version is compatible with this schema exactly,
+        without validating.
+
+        Args:
+            data:   The data to check compatibility of.
+
+        Returns:
+            True if the data is compatible with the schema, false otherwise.
+        """
+        major, minor = self.get_version(data)
+        return major == self.major and minor <= self.minor
+
+    def get_exactly_compatible(self, data):
+        """
+        Get the schema version exactly-compatible with the schema version of a
+        data, without validating.
+
+        Args:
+            data:   The data to get the exactly-compatible schema for.
+
+        Returns:
+            The schema exactly-compatible with the data version, or None, if
+            not found.
+        """
+        if self.is_compatible_exactly(data):
+            return self
+        if self.previous:
+            return self.previous.get_exactly_compatible(data)
+        return None
+
+    def is_compatible(self, data):
+        """
+        Check if a data's version is compatible with this or previous schema
+        versions, without validating.
+
+        Args:
+            data:   The data to check compatibility of.
+
+        Returns:
+            True if the data is compatible with this or a previous schema,
+            false otherwise.
+        """
+        return self.get_exactly_compatible(data) is not None
 
     def validate_exactly(self, data):
         """
@@ -103,12 +156,10 @@ class Version:
             `jsonschema.exceptions.ValidationError` if the data did not adhere
             to this or a previous version of the schema.
         """
-        # Check for "previous" outside except block to avoid re-raising
-        if self.previous:
-            try:
-                return self.validate_exactly(data)
-            except jsonschema.exceptions.ValidationError:
-                return self.previous.validate(data)
+        exactly_compatible = self.get_exactly_compatible(data)
+        if exactly_compatible:
+            return exactly_compatible.validate_exactly(data)
+        # Produce validation failure if not compatible
         return self.validate_exactly(data)
 
     def is_valid(self, data):

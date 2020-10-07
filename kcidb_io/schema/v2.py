@@ -511,6 +511,26 @@ JSON = {
 }
 
 
+def get_version(data):
+    """
+    Retrieve the schema version from a data.
+
+    Args:
+        data:   The data to retrieve the schema version from.
+
+    Returns:
+        The major and the minor schema version numbers from the data,
+        or (None, None), if not found.
+    """
+    try:
+        version = data["version"]
+        if isinstance(version, dict):
+            return v1.VERSION.get_version(data)
+    except (TypeError, KeyError):
+        pass
+    return None, None
+
+
 def inherit(data):
     """
     Inherit data, i.e. convert data adhering to the previous version of
@@ -563,7 +583,8 @@ TREE = {
     "tests": []
 }
 
+
 VERSION = Version(JSON_VERSION_MAJOR, JSON_VERSION_MINOR, JSON, TREE,
-                  v1.VERSION, inherit)
+                  get_version, v1.VERSION, inherit)
 
 __all__ = ["VERSION"]

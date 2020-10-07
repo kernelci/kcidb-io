@@ -1,5 +1,6 @@
 """Kernel CI reporting I/O schema v1"""
 
+import re
 from kcidb_io.schema.misc import Version
 
 # Major version number of JSON schema.
@@ -535,6 +536,38 @@ JSON = {
     ]
 }
 
+
+def get_version(data):
+    """
+    Retrieve the schema version from a data.
+
+    Args:
+        data:   The data to retrieve the schema version from.
+
+    Returns:
+        The major and the minor schema version numbers from the data,
+        or (None, None), if not found.
+    """
+    try:
+        version = data["version"]
+        if isinstance(version, str):
+            match = re.match("^([0-9]+)(\\.([0-9]+))?$", version)
+            if match:
+                return int(match.group(1)), int(match.group(3) or "0")
+        else:
+            major = version["major"]
+            try:
+                minor = version["minor"]
+            except KeyError:
+                minor = 0
+            if isinstance(major, int) and isinstance(minor, int) and \
+               major >= 0 and minor >= 0:
+                return major, minor
+    except (TypeError, KeyError, ValueError):
+        pass
+    return None, None
+
+
 # The parent-child relationship tree
 TREE = {
     "": ["revisions"],
@@ -543,6 +576,7 @@ TREE = {
     "tests": []
 }
 
-VERSION = Version(JSON_VERSION_MAJOR, JSON_VERSION_MINOR, JSON, TREE)
+VERSION = Version(JSON_VERSION_MAJOR, JSON_VERSION_MINOR, JSON, TREE,
+                  get_version)
 
 __all__ = ["VERSION"]
