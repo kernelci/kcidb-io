@@ -649,6 +649,6 @@ TREE = {
 }
 
 VERSION = Version(JSON_VERSION_MAJOR, JSON_VERSION_MINOR, JSON, TREE,
-                  v2.VERSION, inherit)
+                  v2.VERSION.get_version, v2.VERSION, inherit)
 
 __all__ = ["VERSION"]
