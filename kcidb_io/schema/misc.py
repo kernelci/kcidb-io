@@ -181,24 +181,35 @@ class Version:
     def upgrade(self, data, copy=True):
         """
         Upgrade the data to this version from any of the previous schema
-        versions. Validates the data. Has no effect if the data already
-        adheres to this schema version.
+        versions. Has no effect if the data already adheres to this schema
+        version.
 
         Args:
-            data:   The data to upgrade and validate. Must adhere to this
-                    version or any of the previous versions.
-            copy:   True, if the data should be copied before upgrading.
-                    False, if the data should be upgraded in-place.
+            data:   The data to upgrade. Must adhere to this version,
+                    or any of the previous versions.
+            copy:   True, if the data should be copied before handling.
+                    False, if the data should be upgraded in-place, or
+                    returned as is, if it already adheres to this version.
                     Optional, default is True.
 
         Returns:
-            The upgraded and validated data.
+            The upgraded (and/or copied) data.
+
+        Raises:
+            jsonschema.exceptions.ValidationError: Data didn't adhere to this,
+                                                   or any of the previous
+                                                   schema versions.
         """
-        if not self.is_compatible_exactly(data) and \
-           self.previous and self.previous.is_compatible(data):
-            if copy:
-                data = deepcopy(data)
-            data = self.previous.upgrade(data, copy=False)
-            if self.inherit:
-                data = self.inherit(data)
-        return self.validate_exactly(data)
+        assert self.is_valid(data)
+        if copy:
+            data = deepcopy(data)
+        if not self.is_compatible_exactly(data):
+            if self.previous and self.previous.is_compatible(data):
+                data = self.previous.upgrade(data, copy=False)
+                if self.inherit:
+                    data = self.inherit(data)
+                assert self.is_valid_exactly(data)
+            else:
+                # Fail validation in detail, with the latest schema
+                self.validate_exactly(data)
+        return data
