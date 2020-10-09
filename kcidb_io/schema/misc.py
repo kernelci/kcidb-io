@@ -2,6 +2,7 @@
 
 from copy import deepcopy
 import jsonschema
+from kcidb_io.misc import LIGHT_ASSERTS
 
 
 class Version:
@@ -200,7 +201,7 @@ class Version:
                                                    or any of the previous
                                                    schema versions.
         """
-        assert self.is_valid(data)
+        assert LIGHT_ASSERTS or self.is_valid(data)
         if copy:
             data = deepcopy(data)
         if not self.is_compatible_exactly(data):
@@ -208,7 +209,7 @@ class Version:
                 data = self.previous.upgrade(data, copy=False)
                 if self.inherit:
                     data = self.inherit(data)
-                assert self.is_valid_exactly(data)
+                assert LIGHT_ASSERTS or self.is_valid_exactly(data)
             else:
                 # Fail validation in detail, with the latest schema
                 self.validate_exactly(data)
