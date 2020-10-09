@@ -1,10 +1,11 @@
 """Kernel CI reporting I/O data"""
 
 from copy import deepcopy
-from kcidb_io import schema
+from kcidb_io import schema, misc
+from kcidb_io.misc import LIGHT_ASSERTS
 
 # Silence flake8 "imported but unused" warning
-__all__ = ["schema", "new", "merge"]
+__all__ = ["schema", "misc", "new", "merge"]
 
 
 def new():
@@ -16,7 +17,7 @@ def new():
     """
     data = dict(version=dict(major=schema.LATEST.major,
                              minor=schema.LATEST.minor))
-    assert schema.is_valid_latest(data)
+    assert LIGHT_ASSERTS or schema.is_valid_latest(data)
     return data
 
 
@@ -32,7 +33,7 @@ def get_obj_num(data):
     Returns:
         The number of objects in the data set.
     """
-    assert schema.is_valid_latest(data)
+    assert LIGHT_ASSERTS or schema.is_valid_latest(data)
     return sum(len(data[k]) for k in schema.LATEST.tree if k and k in data)
 
 
@@ -53,14 +54,14 @@ def merge(target, sources, copy_target=True, copy_sources=True):
     Returns:
         The merged data, adhering to the latest schema version.
     """
-    assert schema.is_valid(target)
+    assert LIGHT_ASSERTS or schema.is_valid(target)
 
     if copy_target:
         target = deepcopy(target)
     target = schema.upgrade(target, copy=False)
 
     for source in sources:
-        assert schema.is_valid(source)
+        assert LIGHT_ASSERTS or schema.is_valid(source)
         if copy_sources:
             source = deepcopy(source)
         source = schema.upgrade(source, copy=False)
@@ -69,5 +70,5 @@ def merge(target, sources, copy_target=True, copy_sources=True):
                 target[obj_list_name] = \
                     target.get(obj_list_name, []) + source[obj_list_name]
 
-    assert schema.is_valid_latest(target)
+    assert LIGHT_ASSERTS or schema.is_valid_latest(target)
     return target

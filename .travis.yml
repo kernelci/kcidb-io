@@ -10,6 +10,6 @@ before_script:
 script:
     - "flake8 kcidb_io *.py"
     - "pylint kcidb_io *.py"
-    - pytest
+    - KCIDB_IO_HEAVY_ASSERTS=1 pytest
     - pip3 install .kcidb
     - pytest .kcidb
