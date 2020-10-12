@@ -12,4 +12,4 @@ script:
     - "pylint kcidb_io *.py"
     - KCIDB_IO_HEAVY_ASSERTS=1 pytest
     - pip3 install .kcidb
-    - pytest .kcidb
+    - KCIDB_HEAVY_ASSERTS=1 KCIDB_IO_HEAVY_ASSERTS=1 pytest .kcidb
