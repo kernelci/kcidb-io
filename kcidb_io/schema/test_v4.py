@@ -186,3 +186,66 @@ class UpgradeTestCase(unittest.TestCase):
         )
 
         self.assertEqual(VERSION.upgrade(prev_version_data), new_version_data)
+
+    def test_description_to_comment_rename(self):
+        """Check renaming 'description' to 'comment'"""
+        prev_version_data = dict(
+            version=dict(major=VERSION.previous.major,
+                         minor=VERSION.previous.minor),
+            revisions=[
+                dict(id="5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
+                     origin="origin1",
+                     description="A revision with a comment"),
+                dict(id="a538920a149edf64f9022722eb48d680bfda6dc8",
+                     origin="origin1"),
+            ],
+            builds=[
+                dict(revision_id="5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
+                     id="origin2:1",
+                     origin="origin2",
+                     description="A build with a comment"),
+                dict(revision_id="5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
+                     id="origin3:2",
+                     origin="origin3"),
+            ],
+            tests=[
+                dict(build_id="origin2:1", id="origin4:1-1", origin="origin4",
+                     description="A test with a comment"),
+                dict(build_id="origin2:1", id="origin5:1-2", origin="origin5"),
+                dict(build_id="origin3:2", id="origin6:2-1", origin="origin6",
+                     description="Another test with a comment"),
+                dict(build_id="origin3:2", id="origin7:2-2", origin="origin7"),
+            ],
+        )
+        new_version_data = dict(
+            version=dict(major=VERSION.major,
+                         minor=VERSION.minor),
+            checkouts=[
+                dict(id="_:5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
+                     origin="origin1",
+                     patchset_hash="",
+                     comment="A revision with a comment"),
+                dict(id="_:a538920a149edf64f9022722eb48d680bfda6dc8",
+                     origin="origin1",
+                     patchset_hash=""),
+            ],
+            builds=[
+                dict(checkout_id="_:5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
+                     id="origin2:1",
+                     origin="origin2",
+                     comment="A build with a comment"),
+                dict(checkout_id="_:5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
+                     id="origin3:2",
+                     origin="origin3"),
+            ],
+            tests=[
+                dict(build_id="origin2:1", id="origin4:1-1", origin="origin4",
+                     comment="A test with a comment"),
+                dict(build_id="origin2:1", id="origin5:1-2", origin="origin5"),
+                dict(build_id="origin3:2", id="origin6:2-1", origin="origin6",
+                     comment="Another test with a comment"),
+                dict(build_id="origin3:2", id="origin7:2-2", origin="origin7"),
+            ],
+        )
+
+        self.assertEqual(VERSION.upgrade(prev_version_data), new_version_data)
