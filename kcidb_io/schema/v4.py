@@ -190,10 +190,10 @@ JSON_CHECKOUT = {
                 "message with the applied patchset, or a release "
                 "announcement sent to a maillist.",
         },
-        "description": {
+        "comment": {
             "type": "string",
             "description":
-                "Human-readable description of the checkout. "
+                "A human-readable comment regarding the checkout. "
                 "E.g. the checked out release version, or the subject of the "
                 "message with the applied patchset."
         },
@@ -288,10 +288,10 @@ JSON_BUILD = {
                 "The name of the CI system which submitted the build",
             "pattern": f"^{ORIGIN_PATTERN}$",
         },
-        "description": {
+        "comment": {
             "type": "string",
             "description":
-                "Human-readable description of the build"
+                "A human-readable comment regarding the build"
         },
         "start_time": {
             "type": "string",
@@ -423,10 +423,10 @@ JSON_TEST = {
                 "amount of memory/storage/CPUs, for each host; "
                 "process environment variables, etc.",
             "properties": {
-                "description": {
+                "comment": {
                     "type": "string",
                     "description":
-                        "Human-readable description of the environment"
+                        "A human-readable comment regarding the environment."
                 },
                 "misc": {
                     "type": "object",
@@ -450,10 +450,10 @@ JSON_TEST = {
                 "ltp.sem01",
             ],
         },
-        "description": {
+        "comment": {
             "type": "string",
             "description":
-                "Human-readable description of the test run"
+                "A human-readable comment regarding the test run"
         },
         "status": {
             "type": "string",
@@ -640,6 +640,9 @@ def inherit(data):
             # Rename "discovery_time" to "start_time"
             if 'discovery_time' in revision:
                 revision['start_time'] = revision.pop('discovery_time')
+            # Rename 'description' to 'comment'
+            if 'description' in revision:
+                revision['comment'] = revision.pop('description')
         # Rename "revisions" to "checkouts"
         data['checkouts'] = data.pop('revisions')
 
@@ -647,6 +650,21 @@ def inherit(data):
     for build in data.get('builds', []):
         # Switch from revision IDs to checkout IDs
         build['checkout_id'] = "_:" + build.pop('revision_id')
+        # Rename 'description' to 'comment'
+        if 'description' in build:
+            build['comment'] = build.pop('description')
+
+    # Inherit tests
+    for test in data.get('tests', []):
+        # Rename 'description' to 'comment'
+        if 'description' in test:
+            test['comment'] = test.pop('description')
+        # Inherit environment
+        if 'environment' in test:
+            environment = test['environment']
+            # Rename 'description' to 'comment'
+            if 'description' in environment:
+                environment['comment'] = environment.pop('description')
 
     # Update version
     data['version'] = dict(major=JSON_VERSION_MAJOR,
