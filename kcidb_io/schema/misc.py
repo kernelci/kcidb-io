@@ -194,7 +194,7 @@ class Version:
                     Optional, default is True.
 
         Returns:
-            The upgraded (and/or copied) data.
+            The upgraded (and/or copied) data, valid for this schema version.
 
         Raises:
             jsonschema.exceptions.ValidationError: Data didn't adhere to this,
@@ -209,8 +209,4 @@ class Version:
                 data = self.previous.upgrade(data, copy=False)
                 if self.inherit:
                     data = self.inherit(data)
-                assert LIGHT_ASSERTS or self.is_valid_exactly(data)
-            else:
-                # Fail validation in detail, with the latest schema
-                self.validate_exactly(data)
-        return data
+        return self.validate_exactly(data)
