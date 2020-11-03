@@ -1,6 +1,6 @@
 """Kernel CI reporting I/O schema"""
 
-from kcidb_io.schema import v1, v2, v3
+from kcidb_io.schema import v1, v2, v3, v4
 
 # Version 1
 V1 = v1.VERSION
@@ -8,8 +8,10 @@ V1 = v1.VERSION
 V2 = v2.VERSION
 # Version 3
 V3 = v3.VERSION
+# Version 3
+V4 = v4.VERSION
 # Latest version of the schema
-LATEST = V3
+LATEST = V4
 
 
 def validate(data):
