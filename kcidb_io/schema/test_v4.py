@@ -249,3 +249,52 @@ class UpgradeTestCase(unittest.TestCase):
         )
 
         self.assertEqual(VERSION.upgrade(prev_version_data), new_version_data)
+
+    def test_generate_environment_id(self):
+        """Check test environment IDs are generated"""
+        prev_version_data = dict(
+            version=dict(major=VERSION.previous.major,
+                         minor=VERSION.previous.minor),
+            tests=[
+                dict(id="origin:test:1",
+                     origin="origin",
+                     build_id="origin:build:1",
+                     environment=dict(
+                         description="Test environment",
+                         misc=dict(platform="zx_spectrum"),
+                     ),
+                ),
+                dict(id="origin:test:2",
+                     origin="origin",
+                     build_id="origin:build:1",
+                     environment=dict()),
+                dict(id="origin:test:3",
+                     origin="origin",
+                     build_id="origin:build:1"),
+            ],
+        )
+        new_version_data = dict(
+            version=dict(major=VERSION.major,
+                         minor=VERSION.minor),
+            tests=[
+                dict(id="origin:test:1",
+                     origin="origin",
+                     build_id="origin:build:1",
+                     environment=dict(
+                         id="_:"
+                            "ed693215445d324a5211f551d13e3ec1"
+                            "bd070ee7e48237f035a0e5c84adf3a00",
+                         comment="Test environment",
+                         misc=dict(platform="zx_spectrum"),
+                     ),
+                ),
+                dict(id="origin:test:2",
+                     origin="origin",
+                     build_id="origin:build:1"),
+                dict(id="origin:test:3",
+                     origin="origin",
+                     build_id="origin:build:1"),
+            ],
+        )
+
+        self.assertEqual(VERSION.upgrade(prev_version_data), new_version_data)
