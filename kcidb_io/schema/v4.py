@@ -161,11 +161,13 @@ JSON_REVISION = {
                 "The Git repository branch in which the commit with the "
                 "revision's base code was discovered."
         },
-        "patch_mboxes": {
+        "patchset_files": {
             "type": "array",
             "description":
-                "List of mboxes containing patches applied "
-                "to the base code of the revision, in order of application",
+                "List of patch files representing the patchset applied to "
+                "the base code of the revision, in order of application. "
+                "Each linked file must be in a format accepted by \"git "
+                "apply\".",
             "items": JSON_RESOURCE,
         },
         "message_id": {
@@ -610,6 +612,12 @@ def inherit(data):
     Returns:
         The inherited data.
     """
+    # Inherit revisions
+    for revision in data.get('revisions', []):
+        # Rename "patch_mboxes" to "patchset_files"
+        if 'patch_mboxes' in revision:
+            revision['patchset_files'] = revision.pop('patch_mboxes')
+
     # Update version
     data['version'] = dict(major=JSON_VERSION_MAJOR,
                            minor=JSON_VERSION_MINOR)

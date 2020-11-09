@@ -64,3 +64,46 @@ class UpgradeTestCase(unittest.TestCase):
         )
 
         self.assertEqual(VERSION.upgrade(prev_version_data), new_version_data)
+
+    def test_inherit_patchset_files(self):
+        """Check revision's patchset_files are inherited appropriately"""
+        prev_version_data = dict(
+            version=dict(major=VERSION.previous.major,
+                         minor=VERSION.previous.minor),
+            revisions=[
+                dict(id="5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
+                     origin="origin1",
+                     patch_mboxes=[
+                         dict(name="0001.patch",
+                              url="https://example.com/0001.patch"),
+                         dict(name="0002.patch",
+                              url="https://example.com/0002.patch"),
+                     ]),
+                dict(id="6150cc0cf631fdf766321368464e9f403fef3428",
+                     origin="origin2",
+                     patch_mboxes=[]),
+                dict(id="3f1c54e6d648205fa1e3d3b405740e0d162ea264",
+                     origin="origin3"),
+            ],
+        )
+        new_version_data = dict(
+            version=dict(major=VERSION.major,
+                         minor=VERSION.minor),
+            revisions=[
+                dict(id="5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
+                     origin="origin1",
+                     patchset_files=[
+                         dict(name="0001.patch",
+                              url="https://example.com/0001.patch"),
+                         dict(name="0002.patch",
+                              url="https://example.com/0002.patch"),
+                     ]),
+                dict(id="6150cc0cf631fdf766321368464e9f403fef3428",
+                     origin="origin2",
+                     patchset_files=[]),
+                dict(id="3f1c54e6d648205fa1e3d3b405740e0d162ea264",
+                     origin="origin3"),
+            ],
+        )
+
+        self.assertEqual(VERSION.upgrade(prev_version_data), new_version_data)
