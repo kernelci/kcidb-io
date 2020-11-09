@@ -4,12 +4,7 @@ python:
     - "3.6"
 install:
     - pip3 install '.[dev]'
-before_script:
-    - git clone --depth=1 https://github.com/kernelci/kcidb.git .kcidb
-    - git -C .kcidb log -n1
 script:
     - "flake8 kcidb_io *.py"
     - "pylint kcidb_io *.py"
     - KCIDB_IO_HEAVY_ASSERTS=1 pytest
-    - pip3 install .kcidb
-    - KCIDB_HEAVY_ASSERTS=1 KCIDB_IO_HEAVY_ASSERTS=1 pytest .kcidb
