@@ -237,6 +237,19 @@ JSON_CHECKOUT = {
                 "The URL of the log file of the checkout attempt. "
                 "E.g. 'git am' output.",
         },
+        "log_excerpt": {
+            "type": "string",
+            "maxLength": 16384,
+            "description":
+                "A part of the log file of the checkout attempt most "
+                "relevant to its outcome.",
+            "examples": [
+                "error: patch failed: "
+                "arch/arm64/boot/dts/qcom/sc7180.dtsi:510\n"
+                "error: arch/arm64/boot/dts/qcom/sc7180.dtsi: "
+                "patch does not apply\n",
+            ],
+        },
         "valid": {
             "type": "boolean",
             "description":
@@ -352,6 +365,31 @@ JSON_BUILD = {
             "format": "uri",
             "description":
                 "The URL of the build log file.",
+        },
+        "log_excerpt": {
+            "type": "string",
+            "maxLength": 16384,
+            "description":
+                "A part of the log file of the build most relevant to its "
+                "outcome.",
+            "examples": [
+                "In file included from "
+                "./arch/arm64/include/asm/processor.h:35:\n"
+                "./arch/arm64/include/asm/pointer_auth.h:62:3: "
+                "error: invalid input constraint 'rZ' in asm\n"
+                "                __ptrauth_key_install(APIA, keys->apia);\n"
+                "                ^\n"
+                "./arch/arm64/include/asm/pointer_auth.h:55:2: "
+                "note: expanded from macro '__ptrauth_key_install'\n"
+                "        write_sysreg_s(__pki_v.lo, SYS_ ## k ## KEYLO_EL1);"
+                "     \\\n"
+                "        ^\n"
+                "./arch/arm64/include/asm/sysreg.h:829:37: note: "
+                "expanded from macro 'write_sysreg_s'\n"
+                "        asm volatile(__msr_s(r, \"%x0\") : : \"rZ\" "
+                "(__val));               \\\n"
+                "                                           ^\n"
+            ],
         },
         "valid": {
             "type": "boolean",
