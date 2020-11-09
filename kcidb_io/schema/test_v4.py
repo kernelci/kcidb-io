@@ -45,7 +45,8 @@ class UpgradeTestCase(unittest.TestCase):
                          minor=VERSION.minor),
             revisions=[
                 dict(id="5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
-                     origin="origin1")
+                     origin="origin1",
+                     patchset_hash="")
             ],
             builds=[
                 dict(revision_id="5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
@@ -97,12 +98,47 @@ class UpgradeTestCase(unittest.TestCase):
                               url="https://example.com/0001.patch"),
                          dict(name="0002.patch",
                               url="https://example.com/0002.patch"),
-                     ]),
+                     ],
+                     patchset_hash=""),
                 dict(id="6150cc0cf631fdf766321368464e9f403fef3428",
                      origin="origin2",
-                     patchset_files=[]),
+                     patchset_files=[],
+                     patchset_hash=""),
                 dict(id="3f1c54e6d648205fa1e3d3b405740e0d162ea264",
-                     origin="origin3"),
+                     origin="origin3",
+                     patchset_hash="")
+            ],
+        )
+
+        self.assertEqual(VERSION.upgrade(prev_version_data), new_version_data)
+
+    def test_inherit_patchset_hash(self):
+        """Check revision's patchset_hash is inherited appropriately"""
+        prev_version_data = dict(
+            version=dict(major=VERSION.previous.major,
+                         minor=VERSION.previous.minor),
+            revisions=[
+                dict(id="5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
+                     origin="origin1"),
+                dict(id="6150cc0cf631fdf766321368464e9f403fef3428+"
+                        "e3b0c44298fc1c149afbf4c8996fb92427ae41e46"
+                        "49b934ca495991b7852b855",
+                     origin="origin2"),
+            ],
+        )
+        new_version_data = dict(
+            version=dict(major=VERSION.major,
+                         minor=VERSION.minor),
+            revisions=[
+                dict(id="5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
+                     origin="origin1",
+                     patchset_hash=""),
+                dict(id="6150cc0cf631fdf766321368464e9f403fef3428+"
+                        "e3b0c44298fc1c149afbf4c8996fb92427ae41e46"
+                        "49b934ca495991b7852b855",
+                     origin="origin2",
+                     patchset_hash="e3b0c44298fc1c149afbf4c8996fb924"
+                                   "27ae41e4649b934ca495991b7852b855"),
             ],
         )
 

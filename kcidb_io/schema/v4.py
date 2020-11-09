@@ -170,6 +170,25 @@ JSON_REVISION = {
                 "apply\".",
             "items": JSON_RESOURCE,
         },
+        "patchset_hash": {
+            "type": "string",
+            "description":
+                "The patchset hash.\n"
+                "\n"
+                "A sha256 hash over newline-terminated sha256 hashes of each "
+                "patch from the patchset, in order. E.g. generated "
+                "with this shell command: \""
+                "sha256sum *.patch | cut -c-64 | sha256sum | cut -c-64\".\n"
+                "\n"
+                "An empty string, if no patches were applied to the base "
+                "code of the tested revision.\n",
+            "pattern": f"^$|^{SHA256_PATTERN}$",
+            "examples": [
+                "",
+                "903638c087335b10293663c682b9aa0076f9f7be478a8e782" +
+                "8bc22e12d301b42"
+            ],
+        },
         "message_id": {
             "type": "string",
             "format": "email",
@@ -617,6 +636,11 @@ def inherit(data):
         # Rename "patch_mboxes" to "patchset_files"
         if 'patch_mboxes' in revision:
             revision['patchset_files'] = revision.pop('patch_mboxes')
+        # Extract patchset hash, if any
+        try:
+            revision['patchset_hash'] = revision['id'].split("+")[1]
+        except IndexError:
+            revision['patchset_hash'] = ""
 
     # Update version
     data['version'] = dict(major=JSON_VERSION_MAJOR,
