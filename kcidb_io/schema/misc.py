@@ -51,6 +51,7 @@ class Version:
                    isinstance(v, list) and
                    all(isinstance(e, str) for e in v)
                    for k, v in tree.items())
+        assert callable(get_version)
         assert previous is None or \
             isinstance(previous, Version) and (major > previous.major)
         assert inherit is None or previous is not None and callable(inherit)
