@@ -74,6 +74,19 @@ def is_valid_latest(data):
     return LATEST.is_valid_exactly(data)
 
 
+def count(data):
+    """
+    Calculate number of objects of any type in an I/O data set.
+
+    Args:
+        data:   The data set to count the objects in.
+
+    Returns:
+        The number of objects in the data set.
+    """
+    return LATEST.count(data)
+
+
 def upgrade(data, copy=True):
     """
     Upgrade the data to the latest schema version from any of the previous
