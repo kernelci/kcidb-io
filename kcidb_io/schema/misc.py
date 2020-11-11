@@ -110,6 +110,22 @@ class Version:
         """
         return self.get_exactly_compatible(data) is not None
 
+    def count(self, data):
+        """
+        Calculate number of objects of any type in an I/O data set adhering to
+        this or a previous schema version.
+
+        Args:
+            data:   The data set to count the objects in.
+
+        Returns:
+            The number of objects in the data set.
+        """
+        assert LIGHT_ASSERTS or self.is_valid(data)
+        return sum(len(data[k])
+                   for k in self.get_exactly_compatible(data).tree
+                   if k and k in data)
+
     def validate_exactly(self, data):
         """
         Validate the data against this schema version only.

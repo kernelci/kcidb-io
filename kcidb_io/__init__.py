@@ -21,10 +21,24 @@ def new():
     return data
 
 
+def count(data):
+    """
+    Calculate number of objects of any type in an I/O data set.
+
+    Args:
+        data:   The data set to count the objects in.
+
+    Returns:
+        The number of objects in the data set.
+    """
+    assert LIGHT_ASSERTS or schema.is_valid(data)
+    return schema.count(data)
+
+
 def get_obj_num(data):
     """
     Calculate number of objects of any type in an I/O data set adhering to the
-    latest schema.
+    latest schema. DEPRECATED, use count() instead.
 
     Args:
         data:   The data set to count the objects in.
@@ -33,8 +47,8 @@ def get_obj_num(data):
     Returns:
         The number of objects in the data set.
     """
-    assert LIGHT_ASSERTS or schema.is_valid_latest(data)
-    return sum(len(data[k]) for k in schema.LATEST.tree if k and k in data)
+    assert LIGHT_ASSERTS or schema.is_valid(data)
+    return count(data)
 
 
 def merge(target, sources, copy_target=True, copy_sources=True):
