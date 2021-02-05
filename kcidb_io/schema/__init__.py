@@ -8,7 +8,7 @@ V1 = v1.VERSION
 V2 = v2.VERSION
 # Version 3
 V3 = v3.VERSION
-# Version 3
+# Version 4
 V4 = v4.VERSION
 # Latest version of the schema
 LATEST = V4
