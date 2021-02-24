@@ -493,6 +493,28 @@ JSON_TEST = {
             "description":
                 "A human-readable comment regarding the test run"
         },
+        "log_url": {
+            "type": "string",
+            "format": "uri",
+            "description":
+                "The URL of the plain-text test output or log file. "
+                "If the test produced multiple outputs/files, this should "
+                "point to the one containing the highest-level overview of "
+                "the test's operation. The rest should go into "
+                "\"output_files\"."
+        },
+        "log_excerpt": {
+            "type": "string",
+            "maxLength": 16384,
+            "description":
+                "A part of the test output/log file (which could be) "
+                "referenced by \"log_url\", most relevant to the test "
+                "outcome.",
+            "examples": [
+                "netns_breakns_ns_exec_ipv4_ioctl FAIL 2\n",
+                "kernel BUG at net/core/dev.c:2648!\n",
+            ],
+        },
         "status": {
             "type": "string",
             "description":
@@ -542,7 +564,8 @@ JSON_TEST = {
         "output_files": {
             "type": "array",
             "description":
-                "A list of test outputs: logs, dumps, etc.",
+                "A list of test outputs: logs, dumps, etc. "
+                "Except the file referenced by \"log_url\".",
             "items": JSON_RESOURCE,
         },
         "misc": {
