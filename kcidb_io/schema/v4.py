@@ -234,7 +234,7 @@ JSON_CHECKOUT = {
             "type": "string",
             "format": "uri",
             "description":
-                "The URL of the log file of the checkout attempt. "
+                "The URL of a plain-text log file of the checkout attempt. "
                 "E.g. 'git am' output.",
         },
         "log_excerpt": {
@@ -364,7 +364,7 @@ JSON_BUILD = {
             "type": "string",
             "format": "uri",
             "description":
-                "The URL of the build log file.",
+                "The URL of the plain-text build log file.",
         },
         "log_excerpt": {
             "type": "string",
