@@ -665,8 +665,11 @@ def inherit(data):
     # Inherit revisions
     if 'revisions' in data:
         for revision in data['revisions']:
-            # Add placeholder origin to the ID
-            revision['id'] = '_:' + revision['id']
+            # Generate checkout ID from the origin and revision ID.
+            # Assume everyone sending older schema versions only uses their
+            # own revisions, and prevent losing most data to deduplication.
+            # Use placeholder origin to avoid clashes with actual checkouts.
+            revision['id'] = '_:' + revision['origin'] + ':' + revision['id']
             # Rename "patch_mboxes" to "patchset_files"
             if 'patch_mboxes' in revision:
                 revision['patchset_files'] = revision.pop('patch_mboxes')
@@ -686,8 +689,12 @@ def inherit(data):
 
     # Inherit builds
     for build in data.get('builds', []):
-        # Switch from revision IDs to checkout IDs
-        build['checkout_id'] = "_:" + build.pop('revision_id')
+        # Generate checkout ID from the origin and revision ID.
+        # Assume everyone sending older schema versions only uses their
+        # own revisions, and prevent losing most data to deduplication.
+        # Use placeholder origin to avoid clashes with actual checkouts.
+        build['checkout_id'] = '_:' + build['origin'] + ':' + \
+            build.pop('revision_id')
         # Rename 'description' to 'comment'
         if 'description' in build:
             build['comment'] = build.pop('description')
