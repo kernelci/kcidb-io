@@ -189,6 +189,34 @@ class UpgradeTestCase(unittest.TestCase):
 
         self.assertEqual(VERSION.upgrade(prev_version_data), new_version_data)
 
+    def test_drop_publishing_time(self):
+        """Check revision's publishing_time is dropped appropriately"""
+        prev_version_data = dict(
+            version=dict(major=VERSION.previous.major,
+                         minor=VERSION.previous.minor),
+            revisions=[
+                dict(id="5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
+                     origin="origin1",
+                     publishing_time="2020-08-14T23:08:06.967000+00:00"),
+                dict(id="3f1c54e6d648205fa1e3d3b405740e0d162ea264",
+                     origin="origin2"),
+            ],
+        )
+        new_version_data = dict(
+            version=dict(major=VERSION.major,
+                         minor=VERSION.minor),
+            checkouts=[
+                dict(id="_:origin1:5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
+                     origin="origin1",
+                     patchset_hash=""),
+                dict(id="_:origin2:3f1c54e6d648205fa1e3d3b405740e0d162ea264",
+                     origin="origin2",
+                     patchset_hash="")
+            ],
+        )
+
+        self.assertEqual(VERSION.upgrade(prev_version_data), new_version_data)
+
     def test_description_to_comment_rename(self):
         """Check renaming 'description' to 'comment'"""
         prev_version_data = dict(

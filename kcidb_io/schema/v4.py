@@ -197,16 +197,6 @@ JSON_CHECKOUT = {
                 "E.g. the checked out release version, or the subject of the "
                 "message with the applied patchset."
         },
-        "publishing_time": {
-            "type": "string",
-            "format": "date-time",
-            "description":
-                "The time the checked out source code was made public. E.g. "
-                "the timestamp on a patch message, a commit, or a tag.",
-            "examples": [
-                "2020-08-14T23:08:06.967000+00:00",
-            ],
-        },
         "start_time": {
             "type": "string",
             "format": "date-time",
@@ -707,6 +697,8 @@ def inherit(data):
             # Rename 'description' to 'comment'
             if 'description' in revision:
                 revision['comment'] = revision.pop('description')
+            # Remove "publishing_time"
+            revision.pop('publishing_time', None)
         # Rename "revisions" to "checkouts"
         data['checkouts'] = data.pop('revisions')
 
