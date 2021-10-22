@@ -743,5 +743,3 @@ TREE = {
 VERSION = Version(JSON_VERSION_MAJOR, JSON_VERSION_MINOR, JSON,
                   TREE, v3.VERSION.get_version, v3.VERSION,
                   inherit)
-
-__all__ = ["VERSION"]

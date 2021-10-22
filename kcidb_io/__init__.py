@@ -1,11 +1,8 @@
 """Kernel CI reporting I/O data"""
 
 from copy import deepcopy
-from kcidb_io import schema, misc
+from kcidb_io import schema, misc # noqa Silence flake8 "imported but unused" warning
 from kcidb_io.misc import LIGHT_ASSERTS
-
-# Silence flake8 "imported but unused" warning
-__all__ = ["schema", "misc", "new", "merge"]
 
 
 def new():
