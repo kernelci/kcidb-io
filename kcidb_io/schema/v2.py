@@ -577,5 +577,3 @@ def inherit(data):
 
 VERSION = Version(JSON_VERSION_MAJOR, JSON_VERSION_MINOR, JSON,
                   v1.VERSION.tree, get_version, v1.VERSION, inherit)
-
-__all__ = ["VERSION"]
