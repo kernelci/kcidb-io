@@ -14,12 +14,13 @@ V4 = v4.VERSION
 LATEST = V4
 
 
-def validate(data):
+def validate(data, schema=None):
     """
     Validate I/O data against one of the schema versions.
 
     Args:
         data:   The data to validate. Will not be changed.
+        schema: Schema version to validate the data against.
 
     Returns:
         The validated (but unchanged) data.
@@ -28,6 +29,13 @@ def validate(data):
         `jsonschema.exceptions.ValidationError` if the data did not adhere
         to any of the schema versions.
     """
+    if isinstance(schema, int) and V1.major <= schema <= V4.major:
+        return {
+            V1.major: V1,
+            V2.major: V2,
+            V3.major: V3,
+            V4.major: V4,
+        }[schema].validate_exactly(data)
     return LATEST.validate(data)
 
 
