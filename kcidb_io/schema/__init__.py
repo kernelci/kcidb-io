@@ -87,13 +87,14 @@ def count(data):
     return LATEST.count(data)
 
 
-def upgrade(data, copy=True):
+def upgrade(target_schema, data, copy=True):
     """
     Upgrade the data to the latest schema version from any of the previous
     versions. Validates the data. Has no effect if the data already adheres to
     the latest schema version.
 
     Args:
+        target_schema:   The JSON I/O data schema version to upgrade to. 
         data:   The data to upgrade and validate.
                 Must adhere to a version of the schema.
         copy:   True, if the data should be copied before upgrading.
@@ -102,5 +103,13 @@ def upgrade(data, copy=True):
 
     Returns:
         The upgraded and validated data.
-    """
-    return LATEST.upgrade(data, copy)
+    """ 
+    if target_schema == 1:
+        return V1.upgrade(data, copy)
+    elif target_schema == 2:
+        return V2.upgrade(data, copy)
+    elif target_schema == 3:
+        return V3.upgrade(data, copy)
+    else:
+        return LATEST.upgrade(data, copy)
+    
