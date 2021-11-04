@@ -330,8 +330,8 @@ JSON = {
         },
 
         # A test run on a build
-        "test": {
-            "title": "test",
+        "run": {
+            "title": "test run",
             "description":
                 "A test run against a build.\n"
                 "\n"
@@ -516,10 +516,10 @@ JSON = {
             "type": "array",
             "items": {"$ref": "#/$defs/build"},
         },
-        "tests": {
+        "runs": {
             "description": "List of test runs",
             "type": "array",
-            "items": {"$ref": "#/$defs/test"}
+            "items": {"$ref": "#/$defs/run"}
         },
     },
     "additionalProperties": False,

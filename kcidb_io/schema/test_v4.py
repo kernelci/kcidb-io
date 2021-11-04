@@ -39,7 +39,7 @@ class UpgradeTestCase(unittest.TestCase):
                      id="origin2:2",
                      origin="origin2"),
             ],
-            tests=[
+            runs=[
                 dict(build_id="origin1:1", id="origin4:1-1", origin="origin4"),
                 dict(build_id="origin1:1", id="origin5:1-2", origin="origin5"),
                 dict(build_id="origin2:2", id="origin6:2-1", origin="origin6"),
@@ -72,7 +72,7 @@ class UpgradeTestCase(unittest.TestCase):
                      id="origin2:2",
                      origin="origin2"),
             ],
-            tests=[
+            runs=[
                 dict(build_id="origin1:1", id="origin4:1-1", origin="origin4"),
                 dict(build_id="origin1:1", id="origin5:1-2", origin="origin5"),
                 dict(build_id="origin2:2", id="origin6:2-1", origin="origin6"),
@@ -238,7 +238,7 @@ class UpgradeTestCase(unittest.TestCase):
                      id="origin3:2",
                      origin="origin3"),
             ],
-            tests=[
+            runs=[
                 dict(build_id="origin2:1", id="origin4:1-1", origin="origin4",
                      description="A test with a comment"),
                 dict(build_id="origin2:1", id="origin5:1-2", origin="origin5"),
@@ -270,7 +270,7 @@ class UpgradeTestCase(unittest.TestCase):
                      id="origin3:2",
                      origin="origin3"),
             ],
-            tests=[
+            runs=[
                 dict(build_id="origin2:1", id="origin4:1-1", origin="origin4",
                      comment="A test with a comment"),
                 dict(build_id="origin2:1", id="origin5:1-2", origin="origin5"),

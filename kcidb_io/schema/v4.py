@@ -444,8 +444,8 @@ JSON = {
         },
 
         # A test run on a build
-        "test": {
-            "title": "test",
+        "run": {
+            "title": "test run",
             "description":
                 "A test run against a build.\n"
                 "\n"
@@ -670,10 +670,10 @@ JSON = {
             "type": "array",
             "items": {"$ref": "#/$defs/build"},
         },
-        "tests": {
+        "runs": {
             "description": "List of test runs",
             "type": "array",
-            "items": {"$ref": "#/$defs/test"},
+            "items": {"$ref": "#/$defs/run"},
         },
     },
     "additionalProperties": False,
@@ -735,7 +735,7 @@ def inherit(data):
             build['comment'] = build.pop('description')
 
     # Inherit tests
-    for test in data.get('tests', []):
+    for test in data.get('runs', []):
         # Rename 'description' to 'comment'
         if 'description' in test:
             test['comment'] = test.pop('description')
@@ -757,7 +757,7 @@ TREE = {
     "": ["checkouts"],
     "checkouts": ["builds"],
     "builds": ["tests"],
-    "tests": []
+    "runs": []
 }
 
 VERSION = Version(JSON_VERSION_MAJOR, JSON_VERSION_MINOR, JSON,
