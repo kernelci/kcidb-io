@@ -218,7 +218,6 @@ class Version:
                                                    or any of the previous
                                                    schema versions.
         """
-        assert LIGHT_ASSERTS or self.is_valid(data)
         if copy:
             data = deepcopy(data)
         if not self.is_compatible_exactly(data):
