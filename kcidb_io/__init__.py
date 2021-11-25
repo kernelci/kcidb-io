@@ -32,22 +32,6 @@ def count(data):
     return schema.count(data)
 
 
-def get_obj_num(data):
-    """
-    Calculate number of objects of any type in an I/O data set adhering to the
-    latest schema. DEPRECATED, use count() instead.
-
-    Args:
-        data:   The data set to count the objects in.
-                Must adhere to the latest schema.
-
-    Returns:
-        The number of objects in the data set.
-    """
-    assert LIGHT_ASSERTS or schema.is_valid(data)
-    return count(data)
-
-
 def merge(target, sources, copy_target=True, copy_sources=True):
     """
     Merge multiple I/O data into a destination.
