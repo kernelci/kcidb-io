@@ -237,3 +237,39 @@ class Version:
                 if self.inherit:
                     data = self.inherit(data)
         return self.validate_exactly(data)
+
+    def merge(self, target, sources, copy_target=True, copy_sources=True):
+        """
+        Merge multiple datasets into a destination dataset.
+
+        Args:
+            target:         The dataset to merge into.
+            sources:        An iterable containing datasets to merge from.
+            copy_target:    True if "target" contents should be copied before
+                            upgrading and modifying. False if not.
+                            Default is True.
+            copy_sources:   True if "source" contents should be copied before
+                            upgrading and referencing. False if not.
+                            Default is True.
+
+        Returns:
+            The merged dataset, adhering to this schema version.
+        """
+        assert LIGHT_ASSERTS or self.is_valid(target)
+
+        if copy_target:
+            target = deepcopy(target)
+        target = self.upgrade(target, copy=False)
+
+        for source in sources:
+            assert LIGHT_ASSERTS or self.is_valid(source)
+            if copy_sources:
+                source = deepcopy(source)
+            source = self.upgrade(source, copy=False)
+            for obj_list_name in self.tree:
+                if obj_list_name in source:
+                    target[obj_list_name] = \
+                        target.get(obj_list_name, []) + source[obj_list_name]
+
+        assert LIGHT_ASSERTS or self.is_valid(target)
+        return target
