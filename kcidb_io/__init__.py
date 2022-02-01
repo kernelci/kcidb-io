@@ -1,6 +1,5 @@
 """Kernel CI reporting I/O data"""
 
-from copy import deepcopy
 from kcidb_io import schema, misc # noqa Silence flake8 "imported but unused" warning
 from kcidb_io.misc import LIGHT_ASSERTS
 
@@ -46,21 +45,10 @@ def merge(target, sources, copy_target=True, copy_sources=True):
     Returns:
         The merged data, adhering to the latest schema version.
     """
-    assert LIGHT_ASSERTS or schema.is_valid(target)
-
-    if copy_target:
-        target = deepcopy(target)
-    target = schema.upgrade(target, copy=False)
-
-    for source in sources:
-        assert LIGHT_ASSERTS or schema.is_valid(source)
-        if copy_sources:
-            source = deepcopy(source)
-        source = schema.upgrade(source, copy=False)
-        for obj_list_name in schema.LATEST.tree:
-            if obj_list_name in source:
-                target[obj_list_name] = \
-                    target.get(obj_list_name, []) + source[obj_list_name]
-
-    assert LIGHT_ASSERTS or schema.is_valid_latest(target)
-    return target
+    assert LIGHT_ASSERTS or schema.LATEST.is_valid(target)
+    return schema.LATEST.merge(
+        target,
+        sources,
+        copy_target=copy_target,
+        copy_sources=copy_sources
+    )
