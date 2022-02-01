@@ -12,10 +12,7 @@ def new():
     Returns:
         An empty I/O data set adhering to the latest schema version.
     """
-    data = dict(version=dict(major=schema.LATEST.major,
-                             minor=schema.LATEST.minor))
-    assert LIGHT_ASSERTS or schema.is_valid_latest(data)
-    return data
+    return schema.LATEST.new()
 
 
 def count(data):
