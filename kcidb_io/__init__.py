@@ -40,7 +40,7 @@ def count(data):
         The number of objects in the data set.
     """
     _warn_deprecated()
-    return schema.count(data)
+    return schema.LATEST.count(data)
 
 
 def merge(target, sources, copy_target=True, copy_sources=True):
