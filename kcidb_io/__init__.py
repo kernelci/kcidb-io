@@ -1,7 +1,22 @@
 """Kernel CI reporting I/O data"""
 
+from inspect import stack
+from warnings import warn
 from kcidb_io import schema, misc # noqa Silence flake8 "imported but unused" warning
 from kcidb_io.misc import LIGHT_ASSERTS
+
+
+def _warn_deprecated():
+    """
+    Issue a warning about the calling module's function being deprecated.
+    """
+    func = stack()[1].function
+    warn(
+        f"{__name__}.{func}() is deprecated, "
+        f"use {__name__}.schema.<VERSION>.{func}() instead",
+        category=DeprecationWarning,
+        stacklevel=3
+    )
 
 
 def new():
@@ -11,6 +26,7 @@ def new():
     Returns:
         An empty I/O data set adhering to the latest schema version.
     """
+    _warn_deprecated()
     return schema.LATEST.new()
 
 
@@ -24,6 +40,7 @@ def count(data):
     Returns:
         The number of objects in the data set.
     """
+    _warn_deprecated()
     assert LIGHT_ASSERTS or schema.is_valid(data)
     return schema.count(data)
 
@@ -45,6 +62,7 @@ def merge(target, sources, copy_target=True, copy_sources=True):
     Returns:
         The merged data, adhering to the latest schema version.
     """
+    _warn_deprecated()
     assert LIGHT_ASSERTS or schema.LATEST.is_valid(target)
     return schema.LATEST.merge(
         target,
