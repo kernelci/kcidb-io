@@ -196,6 +196,17 @@ class Version:
             return False
         return True
 
+    def new(self):
+        """
+        Create an empty dataset for this schema version.
+
+        Returns:
+            An empty dataset adhering to this schema version.
+        """
+        data = dict(version=dict(major=self.major, minor=self.minor))
+        assert LIGHT_ASSERTS or self.is_valid_exactly(data)
+        return data
+
     def upgrade(self, data, copy=True):
         """
         Upgrade the data to this version from any of the previous schema
