@@ -560,10 +560,10 @@ JSON = {
                     "type": "string",
                     "description":
                         "The test status string, one of the following. "
-                        "\"ERROR\" - the test is faulty, "
-                        "the status of the tested code is unknown. "
                         "\"FAIL\" - the test has failed, the tested code "
                         "is faulty. "
+                        "\"ERROR\" - the test is faulty, "
+                        "the status of the tested code is unknown. "
                         "\"PASS\" - the test has passed, the tested code"
                         " is correct. "
                         "\"DONE\" - the test has finished successfully, "
@@ -579,7 +579,7 @@ JSON = {
                         "suites. The summary status would be the "
                         "highest priority status across all test "
                         "runs in a collection.",
-                    "enum": ["ERROR", "FAIL", "PASS", "DONE", "SKIP"],
+                    "enum": ["FAIL", "ERROR", "PASS", "DONE", "SKIP"],
                 },
                 "waived": {
                     "type": "boolean",
