@@ -106,6 +106,13 @@ JSON = {
             ]
         },
 
+        # A list of named remote resources
+        "resource_list": {
+            "type": "array",
+            "description": "A list of named remote resources",
+            "items": {"$ref": "#/$defs/resource"},
+        },
+
         # A source code checkout being tested
         "checkout": {
             "title": "checkout",
@@ -195,13 +202,12 @@ JSON = {
                         "with the base source code was checked out."
                 },
                 "patchset_files": {
-                    "type": "array",
                     "description":
                         "List of patch files representing the patchset applied"
                         " to the checked out base source code, in order of "
                         "application. Each linked file must be in a format "
                         "accepted by \"git apply\".",
-                    "items": {"$ref": "#/$defs/resource"},
+                    "$ref": "#/$defs/resource_list"
                 },
                 "patchset_hash": {
                     "type": "string",
@@ -374,16 +380,14 @@ JSON = {
                         "make the build",
                 },
                 "input_files": {
-                    "type": "array",
                     "description":
                         "A list of build input files. E.g. configuration.",
-                    "items": {"$ref": "#/$defs/resource"},
+                    "$ref": "#/$defs/resource_list"
                 },
                 "output_files": {
-                    "type": "array",
                     "description":
                         "A list of build output files: images, packages, etc.",
-                    "items": {"$ref": "#/$defs/resource"},
+                    "$ref": "#/$defs/resource_list"
                 },
                 "config_name": {
                     "type": "string",
@@ -608,11 +612,10 @@ JSON = {
                         "The number of seconds it took to run the test",
                 },
                 "output_files": {
-                    "type": "array",
                     "description":
                         "A list of test outputs: logs, dumps, etc. "
                         "Except the file referenced by \"log_url\".",
-                    "items": {"$ref": "#/$defs/resource"},
+                    "$ref": "#/$defs/resource_list"
                 },
                 "misc": {
                     "type": "object",
