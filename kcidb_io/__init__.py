@@ -12,7 +12,7 @@ def _warn_deprecated():
     func = stack()[1].function
     warn(
         f"{__name__}.{func}() is deprecated, "
-        f"use {__name__}.schema.<VERSION>.{func}() instead",
+        f"use {__name__}.schema.V*.{func}() instead",
         category=DeprecationWarning,
         stacklevel=3
     )
