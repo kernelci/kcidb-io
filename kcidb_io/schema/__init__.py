@@ -1,5 +1,7 @@
 """Kernel CI reporting I/O schema"""
 
+from inspect import stack
+from warnings import warn
 from kcidb_io.schema import v1, v2, v3, v4
 
 # Version 1
@@ -12,6 +14,23 @@ V3 = v3.VERSION
 V4 = v4.VERSION
 # Latest version of the schema
 LATEST = V4
+
+
+def _warn_deprecated(new_func=None):
+    """
+    Issue a warning about the calling module's function being deprecated.
+
+    Args:
+        func:   The name of the schema.V* object method to direct the
+                caller to, instead of the method named the same as the caller.
+    """
+    func = stack()[1].function
+    warn(
+        f"{__name__}.{func}() is deprecated, "
+        f"use {__name__}.V*.{new_func or func}() instead",
+        category=DeprecationWarning,
+        stacklevel=3
+    )
 
 
 def validate(data):
@@ -28,6 +47,7 @@ def validate(data):
         `jsonschema.exceptions.ValidationError` if the data did not adhere
         to any of the schema versions.
     """
+    _warn_deprecated()
     return LATEST.validate(data)
 
 
@@ -41,6 +61,7 @@ def is_valid(data):
     Returns:
         True if the data is valid, false otherwise.
     """
+    _warn_deprecated()
     return LATEST.is_valid(data)
 
 
@@ -58,6 +79,7 @@ def validate_latest(data):
         `jsonschema.exceptions.ValidationError` if the data did not adhere
         to the latest schema version.
     """
+    _warn_deprecated("validate_exactly")
     return LATEST.validate_exactly(data)
 
 
@@ -71,6 +93,7 @@ def is_valid_latest(data):
     Returns:
         True if the data is valid, false otherwise.
     """
+    _warn_deprecated("is_valid_exactly")
     return LATEST.is_valid_exactly(data)
 
 
@@ -84,6 +107,7 @@ def count(data):
     Returns:
         The number of objects in the data set.
     """
+    _warn_deprecated()
     return LATEST.count(data)
 
 
@@ -103,4 +127,5 @@ def upgrade(data, copy=True):
     Returns:
         The upgraded and validated data.
     """
+    _warn_deprecated()
     return LATEST.upgrade(data, copy)
