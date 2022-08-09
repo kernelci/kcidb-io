@@ -2,7 +2,7 @@
 
 from inspect import stack
 from warnings import warn
-from kcidb_io.schema import v1, v2, v3, v4
+from kcidb_io.schema import v1, v2, v3, v4, v5
 
 # Version 1
 V1 = v1.VERSION
@@ -12,8 +12,10 @@ V2 = v2.VERSION
 V3 = v3.VERSION
 # Version 4
 V4 = v4.VERSION
+# Version 5
+V5 = v5.VERSION
 # Latest version of the schema
-LATEST = V4
+LATEST = V5
 
 
 def _warn_deprecated(new_func=None):
