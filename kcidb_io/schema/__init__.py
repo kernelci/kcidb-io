@@ -2,18 +2,13 @@
 
 from inspect import stack
 from warnings import warn
-from kcidb_io.schema import v1, v2, v3, v4, v5
+from kcidb_io.schema.abstract import Version as VA  # noqa: F401
+from kcidb_io.schema.v1 import Version as V1  # noqa: F401
+from kcidb_io.schema.v2 import Version as V2  # noqa: F401
+from kcidb_io.schema.v3 import Version as V3  # noqa: F401
+from kcidb_io.schema.v4 import Version as V4  # noqa: F401
+from kcidb_io.schema.v5 import Version as V5  # noqa: F401
 
-# Version 1
-V1 = v1.VERSION
-# Version 2
-V2 = v2.VERSION
-# Version 3
-V3 = v3.VERSION
-# Version 4
-V4 = v4.VERSION
-# Version 5
-V5 = v5.VERSION
 # Latest version of the schema
 LATEST = V5
 

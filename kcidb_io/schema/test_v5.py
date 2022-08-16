@@ -1,7 +1,7 @@
 """v5 module tests"""
 
 import unittest
-from kcidb_io.schema.v5 import VERSION
+from kcidb_io.schema.v5 import Version
 
 # Disable long line checking for JSON data
 # flake8: noqa
@@ -19,8 +19,8 @@ class UpgradeTestCase(unittest.TestCase):
     def test_upgrade(self):
         """Check upgrade works in general"""
         prev_version_data = dict(
-            version=dict(major=VERSION.previous.major,
-                         minor=VERSION.previous.minor),
+            version=dict(major=Version.previous.major,
+                         minor=Version.previous.minor),
             checkouts=[
                 dict(id="origin1:5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
                      origin="origin1"),
@@ -51,8 +51,8 @@ class UpgradeTestCase(unittest.TestCase):
             ],
         )
         new_version_data = dict(
-            version=dict(major=VERSION.major,
-                         minor=VERSION.minor),
+            version=dict(major=Version.major,
+                         minor=Version.minor),
             checkouts=[
                 dict(id="origin1:5e29d1443c46b6ca70a4c940a67e8c09f05dcb7e",
                      origin="origin1"),
@@ -83,4 +83,4 @@ class UpgradeTestCase(unittest.TestCase):
             ],
         )
 
-        self.assertEqual(VERSION.upgrade(prev_version_data), new_version_data)
+        self.assertEqual(Version.upgrade(prev_version_data), new_version_data)
