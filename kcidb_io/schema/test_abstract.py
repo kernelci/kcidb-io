@@ -1,0 +1,115 @@
+"""Abstract module tests"""
+
+import unittest
+from kcidb_io.schema.abstract import Version
+
+
+class VersionTestCase(unittest.TestCase):
+    """Version class test case"""
+
+    def test_correct_versions(self):
+        """Check correct versions can be created"""
+        # pylint: disable=unused-variable,missing-class-docstring
+        class V1(Version):
+            major = 1
+            minor = 0
+            json = dict(title="v1")
+            tree = {"": []}
+
+            @classmethod
+            def _inherit(cls, data):
+                pass
+
+        class V2(V1):
+            major = 2
+            minor = 0
+            json = dict(title="v2")
+            tree = {"": []}
+
+            @classmethod
+            def _inherit(cls, data):
+                pass
+
+        # Piss off, old pylint
+        self.assertTrue(not False)
+
+    def test_incorrect_versions(self):
+        """Check incorrect versions are detected"""
+        # pylint: disable=unused-variable,missing-class-docstring
+        with self.assertRaises(AssertionError):
+            class VNone(Version):
+                pass
+
+        with self.assertRaises(AssertionError):
+            class V1Incomplete(Version):
+                major = 1
+
+        with self.assertRaises(AssertionError):
+            class V0(Version):
+                major = 0
+                minor = 0
+                json = dict(title="v0")
+                tree = {"": []}
+
+                @classmethod
+                def _inherit(cls, data):
+                    pass
+
+        with self.assertRaises(AssertionError):
+            class V1WithoutInherit(Version):
+                major = 1
+                minor = 0
+                json = dict(title="v1")
+                tree = {"": []}
+
+        with self.assertRaises(AssertionError):
+            class V1WithInherit(Version):
+                major = 1
+                minor = 0
+                json = dict(title="v1")
+                tree = {"": []}
+
+                @classmethod
+                def _inherit(cls, data):
+                    pass
+
+            class V2WithoutInherit(V1WithInherit):
+                major = 2
+                minor = 0
+                json = dict(title="v2")
+                tree = {"": []}
+
+        with self.assertRaises(AssertionError):
+            class V1InvalidTree(Version):
+                major = 1
+                minor = 0
+                json = dict(title="v1")
+                tree = {}
+
+                @classmethod
+                def _inherit(cls, data):
+                    pass
+
+        with self.assertRaises(AssertionError):
+            class V1(Version):
+                major = 1
+                minor = 0
+                json = dict(title="v1")
+                tree = {"": []}
+
+                @classmethod
+                def _inherit(cls, data):
+                    pass
+
+            class V2OldMajor(V1):
+                major = 1
+                minor = 0
+                json = dict(title="v1")
+                tree = {"": []}
+
+                @classmethod
+                def _inherit(cls, data):
+                    pass
+
+        # Piss off, old pylint
+        self.assertTrue(not False)
