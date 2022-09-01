@@ -48,6 +48,26 @@ class MetaVersion(ABCMeta):
                        for k, v in cls.tree.items())
             assert "" in cls.tree
 
+    def __le__(cls, other):
+        if not issubclass(cls, other) and not issubclass(other, cls):
+            raise NotImplementedError
+        return issubclass(other, cls)
+
+    def __ge__(cls, other):
+        if not issubclass(cls, other) and not issubclass(other, cls):
+            raise NotImplementedError
+        return issubclass(cls, other)
+
+    def __lt__(cls, other):
+        if not issubclass(cls, other) and not issubclass(other, cls):
+            raise NotImplementedError
+        return issubclass(other, cls) and cls is not other
+
+    def __gt__(cls, other):
+        if not issubclass(cls, other) and not issubclass(other, cls):
+            raise NotImplementedError
+        return issubclass(cls, other) and cls is not other
+
     @property
     def previous(cls):
         """The previous version"""
