@@ -113,3 +113,79 @@ class VersionTestCase(unittest.TestCase):
 
         # Piss off, old pylint
         self.assertTrue(not False)
+
+    def test_comparison(self):
+        """Test schema version comparison is correct"""
+        # pylint: disable=unused-variable,missing-class-docstring
+        # pylint: disable=too-many-statements
+        class V1(Version):
+            major = 1
+            minor = 0
+            json = dict(title="v1")
+            tree = {"": []}
+
+            @classmethod
+            def _inherit(cls, data):
+                pass
+
+        class V2A(V1):
+            major = 2
+            minor = 0
+            json = dict(title="v2a")
+            tree = {"": []}
+
+            @classmethod
+            def _inherit(cls, data):
+                pass
+
+        class V2B(V1):
+            major = 2
+            minor = 0
+            json = dict(title="v2b")
+            tree = {"": []}
+
+            @classmethod
+            def _inherit(cls, data):
+                pass
+
+        # Calm down, it's a test, pylint: disable=comparison-with-itself
+        self.assertTrue(V1 == V1)
+        self.assertTrue(V2A == V2A)
+        self.assertTrue(V2B == V2B)
+        self.assertFalse(V1 != V1)
+        self.assertFalse(V2A != V2A)
+        self.assertFalse(V2B != V2B)
+
+        self.assertTrue(V1 != V2A)
+        self.assertTrue(V1 != V2B)
+        self.assertTrue(V2A != V2B)
+        self.assertFalse(V1 == V2A)
+        self.assertFalse(V1 == V2B)
+        self.assertFalse(V2A == V2B)
+
+        self.assertTrue(V1 <= V1)
+        self.assertTrue(V1 >= V1)
+        self.assertFalse(V1 < V1)
+        self.assertFalse(V1 > V1)
+        self.assertTrue(V2A <= V2A)
+        self.assertTrue(V2A >= V2A)
+        self.assertFalse(V2A < V2A)
+        self.assertFalse(V2A > V2A)
+        self.assertTrue(V2B <= V2B)
+        self.assertTrue(V2B >= V2B)
+        self.assertFalse(V2B < V2B)
+        self.assertFalse(V2B > V2B)
+
+        self.assertTrue(V1 < V2A)
+        self.assertTrue(V1 < V2B)
+        self.assertFalse(V1 > V2A)
+        self.assertFalse(V1 > V2B)
+
+        with self.assertRaises(NotImplementedError):
+            self.assertTrue(V2A < V2B)
+        with self.assertRaises(NotImplementedError):
+            self.assertTrue(V2A > V2B)
+        with self.assertRaises(NotImplementedError):
+            self.assertTrue(V2A <= V2B)
+        with self.assertRaises(NotImplementedError):
+            self.assertTrue(V2A >= V2B)
