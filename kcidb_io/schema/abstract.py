@@ -87,6 +87,15 @@ class MetaVersion(ABCMeta):
             # Piss off, pylint: disable=self-cls-assignment
             cls = cls.__bases__[0]
 
+    @property
+    def history(cls):
+        """
+        A tuple containing every version in history, starting with the
+        first version (the direct child of the abstract version) and ending
+        with this one.
+        """
+        return tuple(reversed(tuple(cls.lineage)))
+
 
 class Version(ABC, metaclass=MetaVersion):
     """Abstract schema version"""
