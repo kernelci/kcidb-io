@@ -623,8 +623,8 @@ class Version(PreviousVersion):
         ]
     }
 
-    # The parent-child relationship tree
-    tree = {
+    # The parent-child relationship graph
+    graph = {
         "": ["revisions"],
         "revisions": ["builds"],
         "builds": ["tests"],
@@ -645,7 +645,7 @@ class Version(PreviousVersion):
         """
         # Extract origins into separate fields
         origin_regex = re.compile(f"^({Version.origin_pattern}):.*")
-        for obj_list_name in super().tree:
+        for obj_list_name in super().graph:
             if obj_list_name:
                 for obj in data.get(obj_list_name, []):
                     obj["origin"] = origin_regex.search(obj["id"]).group(1)

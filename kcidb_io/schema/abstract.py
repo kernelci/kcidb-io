@@ -25,14 +25,17 @@ class MetaVersion(ABCMeta):
         assert "major" in _dict, "Version has no own major number"
         assert "minor" in _dict, "Version has no own minor number"
         # Require each version to have its own JSON schema and the
-        # corresponding tree to minimize chance of accidental inheritance
+        # corresponding graph to minimize chance of accidental inheritance
         assert "json" in _dict, "Version has no own schema"
-        assert "tree" in _dict, "Version has no own tree"
+        assert "graph" in _dict, "Version has no own graph"
         # Require each version to have an explicit _inherit() method to
         # minimize the chance of (most likely incorrect) accidental
         # inheritance.
         assert "_inherit" in _dict, "Version has no own _inherit() method"
         super().__init__(name, bases, _dict, **kwargs)
+        # We need it for later, pylint: disable=fixme
+        # TODO Remove once users transition to using "graph",
+        cls.tree = cls.graph
         base = bases[0]
         # If this is not the base abstract version
         if base is not ABC:
@@ -41,12 +44,12 @@ class MetaVersion(ABCMeta):
             assert isinstance(cls.minor, int) and cls.minor >= 0
             assert isinstance(cls.json, dict)
             assert cls.json != base.json
-            assert isinstance(cls.tree, dict)
+            assert isinstance(cls.graph, dict)
             assert all(isinstance(k, str) and
                        isinstance(v, list) and
                        all(isinstance(e, str) for e in v)
-                       for k, v in cls.tree.items())
-            assert "" in cls.tree
+                       for k, v in cls.graph.items())
+            assert "" in cls.graph
 
     def __le__(cls, other):
         if not issubclass(cls, other) and not issubclass(other, cls):
@@ -111,11 +114,11 @@ class Version(ABC, metaclass=MetaVersion):
     minor = None
     # The JSON schema for this version.
     json = None
-    # A tree of parent-child relationships for objects in data's top-level
-    # lists, expressed as a dictionary of object list names to a list of the
-    # same, with the empty string mapping to a list of topmost object list
-    # names.
-    tree = None
+    # A directed graph of parent-child relationships for objects in data's
+    # top-level lists, expressed as a dictionary of object list names to a
+    # list of the same, with the empty string mapping to a list of topmost
+    # object list names.
+    graph = None
 
     @classmethod
     @abstractmethod
@@ -193,7 +196,7 @@ class Version(ABC, metaclass=MetaVersion):
         """
         assert LIGHT_ASSERTS or cls.is_valid(data)
         return sum(len(data[k])
-                   for k in cls.get_exactly_compatible(data).tree
+                   for k in cls.get_exactly_compatible(data).graph
                    if k and k in data)
 
     @classmethod
@@ -379,7 +382,7 @@ class Version(ABC, metaclass=MetaVersion):
             else:
                 source = target_version.upgrade(source, copy=False)
             # Merge the source into the target
-            for obj_list_name in target_version.tree:
+            for obj_list_name in target_version.graph:
                 if obj_list_name in source:
                     target[obj_list_name] = \
                         target.get(obj_list_name, []) + source[obj_list_name]

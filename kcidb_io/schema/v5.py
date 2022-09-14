@@ -681,8 +681,8 @@ class Version(PreviousVersion):
         ],
     }
 
-    # The parent-child relationship tree
-    tree = {
+    # The parent-child relationship graph
+    graph = {
         "": ["checkouts"],
         "checkouts": ["builds"],
         "builds": ["tests"],
