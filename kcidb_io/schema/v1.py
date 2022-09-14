@@ -572,8 +572,8 @@ class Version(AbstractVersion):
         ]
     }
 
-    # The parent-child relationship tree
-    tree = {
+    # The parent-child relationship graph
+    graph = {
         "": ["revisions"],
         "revisions": ["builds"],
         "builds": ["tests"],

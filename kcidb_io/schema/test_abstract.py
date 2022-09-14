@@ -14,7 +14,7 @@ class VersionTestCase(unittest.TestCase):
             major = 1
             minor = 0
             json = dict(title="v1")
-            tree = {"": []}
+            graph = {"": []}
 
             @classmethod
             def _inherit(cls, data):
@@ -24,7 +24,7 @@ class VersionTestCase(unittest.TestCase):
             major = 2
             minor = 0
             json = dict(title="v2")
-            tree = {"": []}
+            graph = {"": []}
 
             @classmethod
             def _inherit(cls, data):
@@ -49,7 +49,7 @@ class VersionTestCase(unittest.TestCase):
                 major = 0
                 minor = 0
                 json = dict(title="v0")
-                tree = {"": []}
+                graph = {"": []}
 
                 @classmethod
                 def _inherit(cls, data):
@@ -60,14 +60,14 @@ class VersionTestCase(unittest.TestCase):
                 major = 1
                 minor = 0
                 json = dict(title="v1")
-                tree = {"": []}
+                graph = {"": []}
 
         with self.assertRaises(AssertionError):
             class V1WithInherit(Version):
                 major = 1
                 minor = 0
                 json = dict(title="v1")
-                tree = {"": []}
+                graph = {"": []}
 
                 @classmethod
                 def _inherit(cls, data):
@@ -77,14 +77,14 @@ class VersionTestCase(unittest.TestCase):
                 major = 2
                 minor = 0
                 json = dict(title="v2")
-                tree = {"": []}
+                graph = {"": []}
 
         with self.assertRaises(AssertionError):
-            class V1InvalidTree(Version):
+            class V1InvalidGraph(Version):
                 major = 1
                 minor = 0
                 json = dict(title="v1")
-                tree = {}
+                graph = {}
 
                 @classmethod
                 def _inherit(cls, data):
@@ -95,7 +95,7 @@ class VersionTestCase(unittest.TestCase):
                 major = 1
                 minor = 0
                 json = dict(title="v1")
-                tree = {"": []}
+                graph = {"": []}
 
                 @classmethod
                 def _inherit(cls, data):
@@ -105,7 +105,7 @@ class VersionTestCase(unittest.TestCase):
                 major = 1
                 minor = 0
                 json = dict(title="v1")
-                tree = {"": []}
+                graph = {"": []}
 
                 @classmethod
                 def _inherit(cls, data):
@@ -122,7 +122,7 @@ class VersionTestCase(unittest.TestCase):
             major = 1
             minor = 0
             json = dict(title="v1")
-            tree = {"": []}
+            graph = {"": []}
 
             @classmethod
             def _inherit(cls, data):
@@ -132,7 +132,7 @@ class VersionTestCase(unittest.TestCase):
             major = 2
             minor = 0
             json = dict(title="v2a")
-            tree = {"": []}
+            graph = {"": []}
 
             @classmethod
             def _inherit(cls, data):
@@ -142,7 +142,7 @@ class VersionTestCase(unittest.TestCase):
             major = 2
             minor = 0
             json = dict(title="v2b")
-            tree = {"": []}
+            graph = {"": []}
 
             @classmethod
             def _inherit(cls, data):
