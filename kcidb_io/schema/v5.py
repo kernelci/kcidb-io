@@ -677,6 +677,32 @@ class Version(PreviousVersion):
                             "id=207065"
                         ]
                     },
+                    "culprit": {
+                        "type": "object",
+                        "description":
+                            "Layers of the execution stack responsible "
+                            "for the issue.",
+                        "properties": {
+                            "code": {
+                                "type": "boolean",
+                                "description": "The built/tested code."
+                            },
+                            "tool": {
+                                "type": "boolean",
+                                "description":
+                                    "The tool - the static "
+                                    "analyzer, the build toolchain, "
+                                    "the test, etc."
+                            },
+                            "harness": {
+                                "type": "boolean",
+                                "description":
+                                    "The harness - the system controlling "
+                                    "the execution of the build/test.",
+                            },
+                        },
+                        "additionalProperties": False,
+                    },
                     "build_valid": {
                         "type": "boolean",
                         "description": "Status to assign to incident builds",
