@@ -102,15 +102,16 @@ class Version(PreviousVersion):
                 "title": "status",
                 "type": "string",
                 "description":
-                    "The test status string, one of the following. "
+                    "The test status string, one of the following.\n"
+                    "\n"
                     "\"FAIL\" - the test has failed, the tested code "
-                    "is faulty. "
+                    "is faulty.\n"
                     "\"ERROR\" - the test is faulty, "
-                    "the status of the tested code is unknown. "
+                    "the status of the tested code is unknown.\n"
                     "\"PASS\" - the test has passed, the tested code"
-                    " is correct. "
+                    " is correct.\n"
                     "\"DONE\" - the test has finished successfully, "
-                    "the status of the tested code is unknown. "
+                    "the status of the tested code is unknown.\n"
                     "\"SKIP\" - the test wasn't executed, "
                     "the status of the tested code is unknown.\n"
                     "\n"
