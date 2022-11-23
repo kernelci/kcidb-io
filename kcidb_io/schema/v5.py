@@ -677,6 +677,15 @@ class Version(PreviousVersion):
                             "id=207065"
                         ]
                     },
+                    "report_subject": {
+                        "type": "string",
+                        "description":
+                            "The subject of the report describing the issue.",
+                        "examples": [
+                            "C-media USB audio device stops working from "
+                            "5.2.0-rc3 onwards"
+                        ]
+                    },
                     "culprit": {
                         "type": "object",
                         "description":
