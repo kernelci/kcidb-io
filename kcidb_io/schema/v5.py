@@ -97,6 +97,35 @@ class Version(PreviousVersion):
                 "items": {"$ref": "#/$defs/resource"},
             },
 
+            # Status of a test run
+            "status": {
+                "title": "status",
+                "type": "string",
+                "description":
+                    "The test status string, one of the following.\n"
+                    "\n"
+                    "\"FAIL\" - the test has failed, the tested code "
+                    "is faulty.\n"
+                    "\"ERROR\" - the test is faulty, "
+                    "the status of the tested code is unknown.\n"
+                    "\"PASS\" - the test has passed, the tested code"
+                    " is correct.\n"
+                    "\"DONE\" - the test has finished successfully, "
+                    "the status of the tested code is unknown.\n"
+                    "\"SKIP\" - the test wasn't executed, "
+                    "the status of the tested code is unknown.\n"
+                    "\n"
+                    "The status names above are listed in priority "
+                    "order (highest to lowest), which could be used "
+                    "for producing a summary status for a collection "
+                    "of test runs, e.g. for all testing done on "
+                    "a build, based on results of executed test "
+                    "suites. The summary status would be the "
+                    "highest priority status across all test "
+                    "runs in a collection.",
+                "enum": ["FAIL", "ERROR", "PASS", "DONE", "SKIP"],
+            },
+
             # A source code checkout being tested
             "checkout": {
                 "title": "checkout",
@@ -557,29 +586,8 @@ class Version(PreviousVersion):
                         ],
                     },
                     "status": {
-                        "type": "string",
-                        "description":
-                            "The test status string, one of the following. "
-                            "\"FAIL\" - the test has failed, the tested code "
-                            "is faulty. "
-                            "\"ERROR\" - the test is faulty, "
-                            "the status of the tested code is unknown. "
-                            "\"PASS\" - the test has passed, the tested code"
-                            " is correct. "
-                            "\"DONE\" - the test has finished successfully, "
-                            "the status of the tested code is unknown. "
-                            "\"SKIP\" - the test wasn't executed, "
-                            "the status of the tested code is unknown.\n"
-                            "\n"
-                            "The status names above are listed in priority"
-                            " order (highest to lowest), which could be used"
-                            " for producing a summary status for a collection"
-                            " of test runs, e.g. for all testing done on "
-                            "a build, based on results of executed test "
-                            "suites. The summary status would be the "
-                            "highest priority status across all test "
-                            "runs in a collection.",
-                        "enum": ["FAIL", "ERROR", "PASS", "DONE", "SKIP"],
+                        "description": "Test status",
+                        "$ref": "#/$defs/status",
                     },
                     "waived": {
                         "type": "boolean",
