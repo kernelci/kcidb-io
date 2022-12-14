@@ -1,4 +1,4 @@
-"""Kernel CI reporting I/O schema v5"""
+"""Kernel CI reporting I/O schema v4.1"""
 
 from kcidb_io.schema.v04_00 import Version as PreviousVersion
 
@@ -7,10 +7,10 @@ class Version(PreviousVersion):
     """Version"""
 
     # Major version number of the schema.
-    major = PreviousVersion.major + 1
+    major = PreviousVersion.major
 
     # Minor version number of the schema.
-    minor = 0
+    minor = PreviousVersion.minor + 1
 
     # JSON schema for I/O data
     json = {
@@ -898,18 +898,3 @@ class Version(PreviousVersion):
         "issues": ["incidents"],
         "incidents": [],
     }
-
-    @staticmethod
-    def _inherit(data):
-        """
-        Inherit data, i.e. convert data adhering to the previous major version
-        of the schema to satisfy this version of the schema.
-
-        Args:
-            data:   The data to inherit.
-                    Will be modified in place.
-
-        Returns:
-            The inherited data.
-        """
-        return data
