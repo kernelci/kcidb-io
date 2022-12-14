@@ -45,10 +45,10 @@ class VersionTestCase(unittest.TestCase):
                 major = 1
 
         with self.assertRaises(AssertionError):
-            class V0(Version):
-                major = 0
+            class VMinus1(Version):
+                major = -1
                 minor = 0
-                json = dict(title="v0")
+                json = dict(title="v-1")
                 graph = {"": []}
 
                 @classmethod

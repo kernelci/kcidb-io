@@ -37,11 +37,13 @@ class MetaVersion(ABCMeta):
         # TODO Remove once users transition to using "graph",
         cls.tree = cls.graph
         base = bases[0]
-        # If this is not the base abstract version
+        # If this is not the abstract version
         if base is not ABC:
             assert isinstance(cls.major, int) and cls.major >= 0
-            assert cls.major > base.major
             assert isinstance(cls.minor, int) and cls.minor >= 0
+            # If this is not the first non-abstract version
+            if base is not Version:
+                assert cls.major > base.major
             assert isinstance(cls.json, dict)
             assert cls.json != base.json
             assert isinstance(cls.graph, dict)
@@ -107,7 +109,7 @@ class Version(ABC, metaclass=MetaVersion):
     # backward-incompatible changes. E.g. deleting or renaming a property,
     # changing a property type, restricting values, making a property
     # required, or adding a new required property.
-    major = 0
+    major = None
     # The minor version number. A non-negative integer. Increases represent
     # backward-compatible changes. E.g. relaxing value restrictions, making a
     # property optional, or adding a new optional property.
