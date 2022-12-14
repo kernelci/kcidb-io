@@ -16,8 +16,8 @@ class VersionTestCase(unittest.TestCase):
             json = dict(title="v1")
             graph = {"": []}
 
-            @classmethod
-            def _inherit(cls, data):
+            @staticmethod
+            def _inherit(data):
                 pass
 
         class V2(V1):
@@ -26,8 +26,8 @@ class VersionTestCase(unittest.TestCase):
             json = dict(title="v2")
             graph = {"": []}
 
-            @classmethod
-            def _inherit(cls, data):
+            @staticmethod
+            def _inherit(data):
                 pass
 
         # Piss off, old pylint
@@ -51,8 +51,8 @@ class VersionTestCase(unittest.TestCase):
                 json = dict(title="v-1")
                 graph = {"": []}
 
-                @classmethod
-                def _inherit(cls, data):
+                @staticmethod
+                def _inherit(data):
                     pass
 
         with self.assertRaises(AssertionError):
@@ -69,8 +69,8 @@ class VersionTestCase(unittest.TestCase):
                 json = dict(title="v1")
                 graph = {"": []}
 
-                @classmethod
-                def _inherit(cls, data):
+                @staticmethod
+                def _inherit(data):
                     pass
 
             class V2WithoutInherit(V1WithInherit):
@@ -86,8 +86,8 @@ class VersionTestCase(unittest.TestCase):
                 json = dict(title="v1")
                 graph = {}
 
-                @classmethod
-                def _inherit(cls, data):
+                @staticmethod
+                def _inherit(data):
                     pass
 
         with self.assertRaises(AssertionError):
@@ -97,8 +97,8 @@ class VersionTestCase(unittest.TestCase):
                 json = dict(title="v1")
                 graph = {"": []}
 
-                @classmethod
-                def _inherit(cls, data):
+                @staticmethod
+                def _inherit(data):
                     pass
 
             class V2OldMajor(V1):
@@ -107,8 +107,8 @@ class VersionTestCase(unittest.TestCase):
                 json = dict(title="v1")
                 graph = {"": []}
 
-                @classmethod
-                def _inherit(cls, data):
+                @staticmethod
+                def _inherit(data):
                     pass
 
     def test_comparison(self):
@@ -121,8 +121,8 @@ class VersionTestCase(unittest.TestCase):
             json = dict(title="v1")
             graph = {"": []}
 
-            @classmethod
-            def _inherit(cls, data):
+            @staticmethod
+            def _inherit(data):
                 pass
 
         class V2A(V1):
@@ -131,8 +131,8 @@ class VersionTestCase(unittest.TestCase):
             json = dict(title="v2a")
             graph = {"": []}
 
-            @classmethod
-            def _inherit(cls, data):
+            @staticmethod
+            def _inherit(data):
                 pass
 
         class V2B(V1):
@@ -141,8 +141,8 @@ class VersionTestCase(unittest.TestCase):
             json = dict(title="v2b")
             graph = {"": []}
 
-            @classmethod
-            def _inherit(cls, data):
+            @staticmethod
+            def _inherit(data):
                 pass
 
         # Calm down, it's a test, pylint: disable=comparison-with-itself

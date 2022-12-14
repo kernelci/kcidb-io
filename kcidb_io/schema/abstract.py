@@ -28,9 +28,7 @@ class MetaVersion(ABCMeta):
         # corresponding graph to minimize chance of accidental inheritance
         assert "json" in _dict, "Version has no own schema"
         assert "graph" in _dict, "Version has no own graph"
-        # Require each version to have an explicit _inherit() method to
-        # minimize the chance of (most likely incorrect) accidental
-        # inheritance.
+        # Require each version to have an explicit _inherit() method
         assert "_inherit" in _dict, "Version has no own _inherit() method"
         super().__init__(name, bases, _dict, **kwargs)
         # We need it for later, pylint: disable=fixme
@@ -285,9 +283,9 @@ class Version(ABC, metaclass=MetaVersion):
         assert LIGHT_ASSERTS or cls.is_valid_exactly(data)
         return data
 
-    @classmethod
+    @staticmethod
     @abstractmethod
-    def _inherit(cls, data):
+    def _inherit(data):
         """
         Inherit data, i.e. convert data adhering to the previous version of
         the schema to satisfy this version of the schema.

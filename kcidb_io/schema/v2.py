@@ -569,8 +569,8 @@ class Version(PreviousVersion):
             pass
         return None, None
 
-    @classmethod
-    def _inherit(cls, data):
+    @staticmethod
+    def _inherit(data):
         """
         Inherit data, i.e. convert data adhering to the previous version of
         the schema to satisfy this version of the schema.
