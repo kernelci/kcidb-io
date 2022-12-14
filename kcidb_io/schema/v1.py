@@ -611,17 +611,12 @@ class Version(AbstractVersion):
             pass
         return None, None
 
-    @staticmethod
-    def _inherit(data):
+    @classmethod
+    def _set_version(cls, data):
         """
-        Inherit data, i.e. convert data adhering to the previous version of
-        the schema to satisfy this version of the schema.
+        Set the schema version of a data to version numbers of this class.
 
         Args:
-            data:   The data to inherit. Will be modified in place.
-
-        Returns:
-            The inherited data.
+            data:   The data to set the schema version of.
         """
-        assert False, "No schema version to inherit from"
-        return data
+        data["version"] = dict(major=cls.major, minor=cls.minor)

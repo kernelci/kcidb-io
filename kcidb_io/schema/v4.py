@@ -692,8 +692,8 @@ class Version(PreviousVersion):
     @staticmethod
     def _inherit(data):
         """
-        Inherit data, i.e. convert data adhering to the previous version of
-        the schema to satisfy this version of the schema.
+        Inherit data, i.e. convert data adhering to the previous major version
+        of the schema to satisfy this version of the schema.
 
         Args:
             data:   The data to inherit. Will be modified in place.
@@ -754,7 +754,4 @@ class Version(PreviousVersion):
                 if 'description' in environment:
                     environment['comment'] = environment.pop('description')
 
-        # Update version
-        data['version'] = dict(major=Version.major,
-                               minor=Version.minor)
         return data

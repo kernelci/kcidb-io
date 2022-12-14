@@ -16,14 +16,26 @@ class VersionTestCase(unittest.TestCase):
             json = dict(title="v1")
             graph = {"": []}
 
-            @staticmethod
-            def _inherit(data):
-                pass
-
         class V2(V1):
             major = 2
             minor = 0
             json = dict(title="v2")
+            graph = {"": []}
+
+            @staticmethod
+            def _inherit(data):
+                pass
+
+        class V2D1(V2):
+            major = 2
+            minor = 1
+            json = dict(title="v2.1")
+            graph = {"": []}
+
+        class V3(V2D1):
+            major = 3
+            minor = 0
+            json = dict(title="v3")
             graph = {"": []}
 
             @staticmethod
@@ -51,17 +63,6 @@ class VersionTestCase(unittest.TestCase):
                 json = dict(title="v-1")
                 graph = {"": []}
 
-                @staticmethod
-                def _inherit(data):
-                    pass
-
-        with self.assertRaises(AssertionError):
-            class V1WithoutInherit(Version):
-                major = 1
-                minor = 0
-                json = dict(title="v1")
-                graph = {"": []}
-
         with self.assertRaises(AssertionError):
             class V1WithInherit(Version):
                 major = 1
@@ -73,11 +74,36 @@ class VersionTestCase(unittest.TestCase):
                 def _inherit(data):
                     pass
 
-            class V2WithoutInherit(V1WithInherit):
+        with self.assertRaises(AssertionError):
+            class V1WithoutInherit(Version):
+                major = 1
+                minor = 0
+                json = dict(title="v1")
+                graph = {"": []}
+
+            class V2WithoutInherit(V1WithoutInherit):
                 major = 2
                 minor = 0
                 json = dict(title="v2")
                 graph = {"": []}
+
+        # Minor version with _inherit() method
+        with self.assertRaises(AssertionError):
+            class V1D0(Version):
+                major = 1
+                minor = 0
+                json = dict(title="v1")
+                graph = {"": []}
+
+            class V1D1(V1D0):
+                major = 1
+                minor = 1
+                json = dict(title="v2")
+                graph = {"": []}
+
+                @staticmethod
+                def _inherit(data):
+                    pass
 
         with self.assertRaises(AssertionError):
             class V1InvalidGraph(Version):
@@ -86,20 +112,12 @@ class VersionTestCase(unittest.TestCase):
                 json = dict(title="v1")
                 graph = {}
 
-                @staticmethod
-                def _inherit(data):
-                    pass
-
         with self.assertRaises(AssertionError):
             class V1(Version):
                 major = 1
                 minor = 0
                 json = dict(title="v1")
                 graph = {"": []}
-
-                @staticmethod
-                def _inherit(data):
-                    pass
 
             class V2OldMajor(V1):
                 major = 1
@@ -120,10 +138,6 @@ class VersionTestCase(unittest.TestCase):
             minor = 0
             json = dict(title="v1")
             graph = {"": []}
-
-            @staticmethod
-            def _inherit(data):
-                pass
 
         class V2A(V1):
             major = 2
