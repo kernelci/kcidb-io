@@ -1,7 +1,7 @@
 """v5 module tests"""
 
 import unittest
-from kcidb_io.schema.v5 import Version
+from kcidb_io.schema.v05_00 import Version
 
 # Disable long line checking for JSON data
 # flake8: noqa
