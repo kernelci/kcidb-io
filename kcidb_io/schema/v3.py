@@ -631,8 +631,8 @@ class Version(PreviousVersion):
         "tests": []
     }
 
-    @classmethod
-    def _inherit(cls, data):
+    @staticmethod
+    def _inherit(data):
         """
         Inherit data, i.e. convert data adhering to the previous version of
         the schema to satisfy this version of the schema.
@@ -645,7 +645,7 @@ class Version(PreviousVersion):
         """
         # Extract origins into separate fields
         origin_regex = re.compile(f"^({Version.origin_pattern}):.*")
-        for obj_list_name in super().graph:
+        for obj_list_name in PreviousVersion.graph:
             if obj_list_name:
                 for obj in data.get(obj_list_name, []):
                     obj["origin"] = origin_regex.search(obj["id"]).group(1)
