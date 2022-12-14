@@ -28,8 +28,6 @@ class MetaVersion(ABCMeta):
         # corresponding graph to minimize chance of accidental inheritance
         assert "json" in _dict, "Version has no own schema"
         assert "graph" in _dict, "Version has no own graph"
-        # Require each version to have an explicit _inherit() method
-        assert "_inherit" in _dict, "Version has no own _inherit() method"
         super().__init__(name, bases, _dict, **kwargs)
         # We need it for later, pylint: disable=fixme
         # TODO Remove once users transition to using "graph",
@@ -39,9 +37,20 @@ class MetaVersion(ABCMeta):
         if base is not ABC:
             assert isinstance(cls.major, int) and cls.major >= 0
             assert isinstance(cls.minor, int) and cls.minor >= 0
-            # If this is not the first non-abstract version
-            if base is not Version:
-                assert cls.major > base.major
+            # If this is the first non-abstract version
+            if base is Version:
+                assert "_inherit" not in _dict, \
+                    "First version has own _inherit() method"
+            # Else, this is not the first non-abstract version
+            else:
+                assert cls.major >= base.major, \
+                    "Major version number is lower than the previous one"
+                assert cls.major > base.major or "_inherit" not in _dict, \
+                    "Minor version has own _inherit() method"
+                assert cls.major == base.major or "_inherit" in _dict, \
+                    "Major version has no own _inherit() method"
+                assert cls.major > base.major or cls.minor > base.minor, \
+                    "Minor version number is lower than the previous one"
             assert isinstance(cls.json, dict)
             assert cls.json != base.json
             assert isinstance(cls.graph, dict)
@@ -135,6 +144,16 @@ class Version(ABC, metaclass=MetaVersion):
         """
 
     @classmethod
+    @abstractmethod
+    def _set_version(cls, data):
+        """
+        Set the schema version of a data to version numbers of this class.
+
+        Args:
+            data:   The data to set the schema version of.
+        """
+
+    @classmethod
     def is_compatible_exactly(cls, data):
         """
         Check if a data's version is compatible with this schema version
@@ -146,8 +165,7 @@ class Version(ABC, metaclass=MetaVersion):
         Returns:
             True if the data is compatible with the schema, false otherwise.
         """
-        major, minor = cls._get_version(data)
-        return major == cls.major and minor <= cls.minor
+        return cls._get_version(data) == (cls.major, cls.minor)
 
     @classmethod
     def get_exactly_compatible(cls, data):
@@ -287,8 +305,9 @@ class Version(ABC, metaclass=MetaVersion):
     @abstractmethod
     def _inherit(data):
         """
-        Inherit data, i.e. convert data adhering to the previous version of
-        the schema to satisfy this version of the schema.
+        Inherit data, i.e. convert data adhering to the previous major version
+        of the schema to satisfy this version of the schema. Doesn't update
+        the data's version numbers.
 
         Args:
             data:   The data to inherit. Will be modified in place.
@@ -341,9 +360,10 @@ class Version(ABC, metaclass=MetaVersion):
 
         # Inherit data through all newer versions up to this one
         for version in newer_versions:
-            # The metaclass makes sure each version has its own _inherit()
             # No it's not, pylint: disable=protected-access
-            data = version._inherit(data)
+            if "_inherit" in version.__dict__:
+                data = version._inherit(data)
+            version._set_version(data)
             assert LIGHT_ASSERTS or version.is_valid_exactly(data)
 
         return data
