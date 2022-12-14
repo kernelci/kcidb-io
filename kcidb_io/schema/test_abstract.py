@@ -111,9 +111,6 @@ class VersionTestCase(unittest.TestCase):
                 def _inherit(cls, data):
                     pass
 
-        # Piss off, old pylint
-        self.assertTrue(not False)
-
     def test_comparison(self):
         """Test schema version comparison is correct"""
         # pylint: disable=unused-variable,missing-class-docstring
