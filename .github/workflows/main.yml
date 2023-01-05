@@ -47,4 +47,5 @@ jobs:
                -H "Accept: application/vnd.github+json" \
                -H "Authorization: token ${{ secrets.KCIDB_WORKFLOW_TRIGGER_TOKEN }}" \
                https://api.github.com/repos/kernelci/kcidb/dispatches \
-               -d '{"event_type":"test","client_payload":{"kcidb_io_ref":"'"$GITHUB_REF"'"}}'
+               -d '{"event_type":"test","client_payload":{"kcidb_io_ref":"'"$GITHUB_REF"'"}}' |
+               { ! grep '.\+'; }
