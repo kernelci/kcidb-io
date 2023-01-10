@@ -156,14 +156,15 @@ class Version(ABC, metaclass=MetaVersion):
     @classmethod
     def is_compatible_exactly(cls, data):
         """
-        Check if a data's version is compatible with this schema version
-        exactly, without validating.
+        Check (without validating) if a data is compatible with this schema
+        version exactly.
 
         Args:
             data:   The data to check compatibility of.
 
         Returns:
-            True if the data is compatible with the schema, false otherwise.
+            True if the data is exactly compatible with the schema,
+            false otherwise.
         """
         return cls._get_version(data) == (cls.major, cls.minor)
 
@@ -188,15 +189,15 @@ class Version(ABC, metaclass=MetaVersion):
     @classmethod
     def is_compatible(cls, data):
         """
-        Check if a data's version is compatible with this or previous schema
-        versions, without validating.
+        Check (without validating) if a data is compatible with this or
+        a previous schema version.
 
         Args:
             data:   The data to check compatibility of.
 
         Returns:
-            True if the data is compatible with this or a previous schema,
-            false otherwise.
+            True if the data is compatible with this or a previous schema
+            version, false otherwise.
         """
         return cls.get_exactly_compatible(data) is not None
 
