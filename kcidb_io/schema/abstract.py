@@ -154,6 +154,40 @@ class Version(ABC, metaclass=MetaVersion):
         """
 
     @classmethod
+    def is_compatible_directly(cls, data):
+        """
+        Check (without validating) if a data is directly compatible (without
+        upgrading) with this schema version.
+
+        Args:
+            data:   The data to check compatibility of.
+
+        Returns:
+            True if the data is directly compatible with the schema,
+            false otherwise.
+        """
+        version = cls._get_version(data)
+        return version[0] == cls.major and version[1] <= cls.minor
+
+    @classmethod
+    def get_directly_compatible(cls, data):
+        """
+        Get a schema version directly-compatible (without upgrading) with
+        the schema version of a data, without validating.
+
+        Args:
+            data:   The data to get an exactly-compatible schema for.
+
+        Returns:
+            A schema version exactly-compatible with the data version, or
+            None, if not found.
+        """
+        for version in cls.lineage:
+            if version.is_compatible_directly(data):
+                return version
+        return None
+
+    @classmethod
     def is_compatible_exactly(cls, data):
         """
         Check (without validating) if a data is compatible with this schema
