@@ -431,10 +431,10 @@ class Version(ABC, metaclass=MetaVersion):
                 source = deepcopy(source)
             # Upgrade both target and source to the same version
             source_version = cls.get_exactly_compatible(source)
-            if issubclass(source_version, target_version):
+            if source_version > target_version:
                 target_version = source_version
                 target = target_version.upgrade(target, copy=False)
-            else:
+            elif source_version < target_version:
                 source = target_version.upgrade(source, copy=False)
             # Merge the source into the target
             for obj_list_name in target_version.graph:
