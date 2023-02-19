@@ -247,6 +247,7 @@ class Version(ABC, metaclass=MetaVersion):
         Returns:
             The number of objects in the data set.
         """
+        assert cls.is_compatible(data)
         assert LIGHT_ASSERTS or cls.is_valid(data)
         return sum(len(data[k])
                    for k in cls.get_exactly_compatible(data).graph
@@ -333,6 +334,7 @@ class Version(ABC, metaclass=MetaVersion):
             An empty dataset adhering to this schema version.
         """
         data = dict(version=dict(major=cls.major, minor=cls.minor))
+        assert cls.is_compatible_exactly(data)
         assert LIGHT_ASSERTS or cls.is_valid_exactly(data)
         return data
 
@@ -421,11 +423,13 @@ class Version(ABC, metaclass=MetaVersion):
         Returns:
             The merged dataset, adhering to this schema version.
         """
+        assert cls.is_compatible(target)
         assert LIGHT_ASSERTS or cls.is_valid(target)
         if copy_target:
             target = deepcopy(target)
         target_version = cls.get_exactly_compatible(target)
         for source in sources:
+            assert cls.is_compatible(source)
             assert LIGHT_ASSERTS or cls.is_valid(source)
             if copy_sources:
                 source = deepcopy(source)
@@ -441,5 +445,6 @@ class Version(ABC, metaclass=MetaVersion):
                 if obj_list_name in source:
                     target[obj_list_name] = \
                         target.get(obj_list_name, []) + source[obj_list_name]
+        assert target_version.is_compatible_exactly(target)
         assert LIGHT_ASSERTS or target_version.is_valid_exactly(target)
         return target
