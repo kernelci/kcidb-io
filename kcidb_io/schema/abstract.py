@@ -254,6 +254,26 @@ class Version(ABC, metaclass=MetaVersion):
                    if k and k in data)
 
     @classmethod
+    def get_ids(cls, data):
+        """
+        Get the IDs of objects in a data set.
+
+        Args:
+            data:   The data set to extract object IDs from.
+
+        Returns:
+            A dictionary of object list names (types), and lists of IDs of
+            corresponding objects from the dataset.
+        """
+        assert cls.is_compatible(data)
+        assert LIGHT_ASSERTS or cls.is_valid(data)
+        return {
+            obj_list_name: [obj["id"] for obj in data[obj_list_name]]
+            for obj_list_name in cls.get_exactly_compatible(data).graph
+            if obj_list_name and obj_list_name in data
+        }
+
+    @classmethod
     def validate_exactly(cls, data):
         """
         Validate the data against this schema version only.
