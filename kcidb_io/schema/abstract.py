@@ -362,7 +362,7 @@ class Version(ABC, metaclass=MetaVersion):
 
         Args:
             data:   The data to upgrade. Must adhere to this version,
-                    or any of the previous versions.
+                    or any of the previous versions. Will not be validated.
             copy:   True, if the data should be copied before handling.
                     False, if the data should be upgraded in-place, or
                     returned as is, if it already adheres to this version.
