@@ -288,8 +288,15 @@ class Version(ABC, metaclass=MetaVersion):
             `jsonschema.exceptions.ValidationError` if the data did not adhere
             to this version of the schema.
         """
+        try:
+            format_checker = jsonschema.Draft7Validator.FORMAT_CHECKER
+        except AttributeError:
+            # Nevermind, pylint: disable=fixme
+            # TODO Remove once we stop supporting Python 3.6
+            format_checker = jsonschema.draft7_format_checker
+
         jsonschema.validate(instance=data, schema=cls.json,
-                            format_checker=jsonschema.draft7_format_checker)
+                            format_checker=format_checker)
         return data
 
     @classmethod
