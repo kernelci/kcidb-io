@@ -102,28 +102,38 @@ class Version(PreviousVersion):
                 "title": "status",
                 "type": "string",
                 "description":
-                    "The test status string, one of the following.\n"
+                    "The test status string, one of the following:\n"
                     "\n"
-                    "\"FAIL\" - the test has failed, the tested code "
-                    "is faulty.\n"
-                    "\"ERROR\" - the test is faulty, "
-                    "the status of the tested code is unknown.\n"
-                    "\"PASS\" - the test has passed, the tested code"
-                    " is correct.\n"
-                    "\"DONE\" - the test has finished successfully, "
-                    "the status of the tested code is unknown.\n"
-                    "\"SKIP\" - the test wasn't executed, "
-                    "the status of the tested code is unknown.\n"
+                    "\"FAIL\" - the test completed and reported the tested "
+                    "code as faulty.\n"
                     "\n"
-                    "The status names above are listed in priority "
-                    "order (highest to lowest), which could be used "
-                    "for producing a summary status for a collection "
-                    "of test runs, e.g. for all testing done on "
-                    "a build, based on results of executed test "
-                    "suites. The summary status would be the "
-                    "highest priority status across all test "
-                    "runs in a collection.",
-                "enum": ["FAIL", "ERROR", "PASS", "DONE", "SKIP"],
+                    "\"ERROR\" - the test didn't complete due to a failure "
+                    "in its code, and the status of the tested code is "
+                    "unknown.\n"
+                    "\n"
+                    "\"MISS\" - the test didn't run due to a failure in the "
+                    "test harness, and the status of both the test and the "
+                    "tested code is unknown.\n"
+                    "\n"
+                    "\"PASS\" - the test completed and reported the tested "
+                    "code as correct.\n"
+                    "\n"
+                    "\"DONE\" - the test completed and had not reported the "
+                    "status of the tested code, but, for example, produced a "
+                    "performance measurement result.\n"
+                    "\n"
+                    "\"SKIP\" - the test did not run or complete, because it "
+                    "was not applicable, and the status of both the test and "
+                    "the tested code is unknown.\n"
+                    "\n"
+                    "The status names above are listed in priority order "
+                    "(highest to lowest), which can be used to produce a "
+                    "summary status for a collection of test runs.\n"
+                    "\n"
+                    "For example, the summary status for all testing done on "
+                    "a build would be the highest-priority status across all "
+                    "its tests.",
+                "enum": ["FAIL", "ERROR", "MISS", "PASS", "DONE", "SKIP"],
             },
 
             # A source code checkout being tested
