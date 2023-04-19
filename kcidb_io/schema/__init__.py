@@ -5,6 +5,7 @@ from kcidb_io.schema.v02_00 import Version as V2_0  # noqa: F401
 from kcidb_io.schema.v03_00 import Version as V3_0  # noqa: F401
 from kcidb_io.schema.v04_00 import Version as V4_0  # noqa: F401
 from kcidb_io.schema.v04_01 import Version as V4_1  # noqa: F401
+from kcidb_io.schema.v04_02 import Version as V4_2  # noqa: F401
 
 # Legacy versions
 V1 = V1_1  # noqa: F401
