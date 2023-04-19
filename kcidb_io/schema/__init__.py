@@ -14,4 +14,4 @@ V3 = V3_0  # noqa: F401
 V4 = V4_0  # noqa: F401
 
 # Latest version of the schema
-LATEST = V4_1
+LATEST = V4_2
