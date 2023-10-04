@@ -162,6 +162,16 @@ class Version(PreviousVersion):
                     "multiple maillists.\n",
                 "type": "object",
                 "properties": {
+                    "_timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description":
+                            "The last time the checkout was updated in the "
+                            "database.",
+                        "examples": [
+                            "2020-08-14T23:08:06.967000+00:00",
+                        ],
+                    },
                     "id": {
                         "type": "string",
                         "description":
@@ -348,6 +358,16 @@ class Version(PreviousVersion):
                 "description": "A build of a source code checkout",
                 "type": "object",
                 "properties": {
+                    "_timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description":
+                            "The last time the build was updated in the "
+                            "database.",
+                        "examples": [
+                            "2020-08-14T23:08:06.967000+00:00",
+                        ],
+                    },
                     "checkout_id": {
                         "type": "string",
                         "description":
@@ -506,6 +526,16 @@ class Version(PreviousVersion):
                     "("" - the empty string).",
                 "type": "object",
                 "properties": {
+                    "_timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description":
+                            "The last time the test was updated in the "
+                            "database.",
+                        "examples": [
+                            "2020-08-14T23:08:06.967000+00:00",
+                        ],
+                    },
                     "build_id": {
                         "type": "string",
                         "description":
@@ -653,6 +683,16 @@ class Version(PreviousVersion):
                     "An issue found in reports.",
                 "type": "object",
                 "properties": {
+                    "_timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description":
+                            "The last time the issue was updated in the "
+                            "database.",
+                        "examples": [
+                            "2020-08-14T23:08:06.967000+00:00",
+                        ],
+                    },
                     "id": {
                         "type": "string",
                         "description":
@@ -762,6 +802,16 @@ class Version(PreviousVersion):
                     "An incident - an issue occurence/absence.",
                 "type": "object",
                 "properties": {
+                    "_timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description":
+                            "The last time the incident was updated in the "
+                            "database.",
+                        "examples": [
+                            "2020-08-14T23:08:06.967000+00:00",
+                        ],
+                    },
                     "id": {
                         "type": "string",
                         "description":
