@@ -192,11 +192,11 @@ class VersionTestCase(unittest.TestCase):
         self.assertFalse(V1 > V2A)
         self.assertFalse(V1 > V2B)
 
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             self.assertTrue(V2A < V2B)
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             self.assertTrue(V2A > V2B)
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             self.assertTrue(V2A <= V2B)
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             self.assertTrue(V2A >= V2B)

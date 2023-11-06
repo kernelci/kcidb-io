@@ -62,22 +62,22 @@ class MetaVersion(ABCMeta):
 
     def __le__(cls, other):
         if not issubclass(cls, other) and not issubclass(other, cls):
-            raise NotImplementedError
+            return NotImplemented
         return issubclass(other, cls)
 
     def __ge__(cls, other):
         if not issubclass(cls, other) and not issubclass(other, cls):
-            raise NotImplementedError
+            return NotImplemented
         return issubclass(cls, other)
 
     def __lt__(cls, other):
         if not issubclass(cls, other) and not issubclass(other, cls):
-            raise NotImplementedError
+            return NotImplemented
         return issubclass(other, cls) and cls is not other
 
     def __gt__(cls, other):
         if not issubclass(cls, other) and not issubclass(other, cls):
-            raise NotImplementedError
+            return NotImplemented
         return issubclass(cls, other) and cls is not other
 
     @property
