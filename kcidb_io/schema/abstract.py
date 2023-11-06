@@ -61,24 +61,28 @@ class MetaVersion(ABCMeta):
             assert "" in cls.graph
 
     def __le__(cls, other):
-        if not issubclass(cls, other) and not issubclass(other, cls):
-            return NotImplemented
-        return issubclass(other, cls)
+        if isinstance(other, type) and \
+           (issubclass(cls, other) or issubclass(other, cls)):
+            return issubclass(other, cls)
+        return NotImplemented
 
     def __ge__(cls, other):
-        if not issubclass(cls, other) and not issubclass(other, cls):
-            return NotImplemented
-        return issubclass(cls, other)
+        if isinstance(other, type) and \
+           (issubclass(cls, other) or issubclass(other, cls)):
+            return issubclass(cls, other)
+        return NotImplemented
 
     def __lt__(cls, other):
-        if not issubclass(cls, other) and not issubclass(other, cls):
-            return NotImplemented
-        return issubclass(other, cls) and cls is not other
+        if isinstance(other, type) and \
+           (issubclass(cls, other) or issubclass(other, cls)):
+            return issubclass(other, cls) and cls is not other
+        return NotImplemented
 
     def __gt__(cls, other):
-        if not issubclass(cls, other) and not issubclass(other, cls):
-            return NotImplemented
-        return issubclass(cls, other) and cls is not other
+        if isinstance(other, type) and \
+           (issubclass(cls, other) or issubclass(other, cls)):
+            return issubclass(cls, other) and cls is not other
+        return NotImplemented
 
     @property
     def previous(cls):
