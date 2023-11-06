@@ -365,6 +365,68 @@ class Version(ABC, metaclass=MetaVersion):
         assert LIGHT_ASSERTS or cls.is_valid_exactly(data)
         return data
 
+    @classmethod
+    def has_metadata(cls, data):
+        """
+        Check if a dataset has metadata.
+
+        Args:
+            data:   The dataset to check.
+
+        Returns:
+            True if the dataset has metadata fields.
+        """
+        assert cls.is_compatible_exactly(data)
+        assert LIGHT_ASSERTS or cls.is_valid_exactly(data)
+
+        def node_has_metadata(node):
+            """Check if a dataset node has metadata"""
+            if isinstance(node, dict):
+                return any(
+                    k.startswith("_") or k != "misc" and node_has_metadata(v)
+                    for k, v in node.items()
+                )
+            if isinstance(node, list):
+                return any(node_has_metadata(v) for v in node)
+            return False
+
+        return node_has_metadata(data)
+
+    @classmethod
+    def strip_metadata(cls, data, copy=True):
+        """
+        Remove metadata from a dataset, if any.
+
+        Args:
+            data:   The dataset to remove metadata from.
+            copy:   True, if the data should be copied before handling.
+                    False, if the metadata should be removed in-place.
+
+        Returns:
+            The (copy of the) dataset with metadata removed.
+        """
+        assert cls.is_compatible_exactly(data)
+        assert LIGHT_ASSERTS or cls.is_valid_exactly(data)
+
+        # Copy the data, if requested
+        if copy:
+            data = deepcopy(data)
+
+        def node_strip_metadata(node):
+            """Strip metadata from a node in a dataset"""
+            if isinstance(node, dict):
+                for k, v in list(node.items()):
+                    if k.startswith("_"):
+                        del node[k]
+                    elif k != "misc":
+                        node_strip_metadata(v)
+            elif isinstance(node, list):
+                for v in node:
+                    node_strip_metadata(v)
+
+        node_strip_metadata(data)
+        return data
+
     @staticmethod
     @abstractmethod
     def _inherit(data):
