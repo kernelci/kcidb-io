@@ -788,7 +788,7 @@ class Version(PreviousVersion):
                         "type": "integer",
                         "description":
                             "The modification version number of the "
-                            "occurring/absent issue. ",
+                            "occurring/absent issue.",
                         "minimum": 0,
                     },
                     "build_id": {
