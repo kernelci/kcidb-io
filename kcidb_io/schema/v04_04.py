@@ -241,6 +241,19 @@ class Version(PreviousVersion):
                             "The Git repository branch from which the commit "
                             "with the base source code was checked out."
                     },
+                    "git_commit_generation": {
+                        "type": "integer",
+                        "description":
+                            "The generation number of the checked out "
+                            "commit within its repository branch, as tracked "
+                            "by the origin.\n"
+                            "\n"
+                            "Commits later in history of the branch must "
+                            "have a larger generation number than earlier "
+                            "commits. Having this number specified enables "
+                            "regression detection along the reports for the "
+                            "branch coming from a particular origin.\n",
+                    },
                     "patchset_files": {
                         "description":
                             "List of patch files representing the patchset "
