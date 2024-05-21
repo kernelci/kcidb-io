@@ -53,6 +53,36 @@ class Version(PreviousVersion):
         "type": "object",
 
         "$defs": {
+            # A git commit hash
+            "git_commit_hash": {
+                "type": "string",
+                "description": "The full hash of a Git commit",
+                "pattern": f"^{PreviousVersion.git_commit_hash_pattern}$",
+                "examples": [
+                    "eee8fd0dcb82a6523d0f6e9b94facaa3877e9906",
+                ]
+            },
+            # A patchset hash (sha256)
+            "patchset_hash": {
+                "type": "string",
+                "description":
+                    "The patchset hash.\n"
+                    "\n"
+                    "A sha256 hash over newline-terminated sha256 hashes of "
+                    "each patch from a patchset applied to a git commit, in "
+                    "order. E.g. generated with this shell command: "
+                    "\"sha256sum *.patch | cut -c-64 | sha256sum | "
+                    "cut -c-64\".\n"
+                    "\n"
+                    "An empty string, if no patches were applied to "
+                    "the commit.\n",
+                "pattern": f"^$|^{PreviousVersion.sha256_pattern}$",
+                "examples": [
+                    "",
+                    "903638c087335b10293663c682b9aa0076f9f7be478a8"
+                    "e7828bc22e12d301b42"
+                ],
+            },
             # A named remote resource
             "resource": {
                 "title": "resource",
@@ -221,12 +251,10 @@ class Version(PreviousVersion):
                         ],
                     },
                     "git_commit_hash": {
-                        "type": "string",
                         "description":
                             "The full commit hash of the checked out base "
                             "source code",
-                        "pattern":
-                            f"^{PreviousVersion.git_commit_hash_pattern}$",
+                        "$ref": "#/$defs/git_commit_hash",
                     },
                     "git_commit_name": {
                         "type": "string",
@@ -263,7 +291,6 @@ class Version(PreviousVersion):
                         "$ref": "#/$defs/resource_list"
                     },
                     "patchset_hash": {
-                        "type": "string",
                         "description":
                             "The patchset hash.\n"
                             "\n"
@@ -275,12 +302,7 @@ class Version(PreviousVersion):
                             "\n"
                             "An empty string, if no patches were applied to "
                             "the checked out base source code.\n",
-                        "pattern": f"^$|^{PreviousVersion.sha256_pattern}$",
-                        "examples": [
-                            "",
-                            "903638c087335b10293663c682b9aa0076f9f7be478a8"
-                            "e7828bc22e12d301b42"
-                        ],
+                        "$ref": "#/$defs/patchset_hash",
                     },
                     "message_id": {
                         "type": "string",
