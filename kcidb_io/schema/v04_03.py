@@ -745,7 +745,8 @@ class Version(PreviousVersion):
                         "type": "object",
                         "description":
                             "Layers of the execution stack responsible "
-                            "for the issue.",
+                            "for the issue. If all are false, the issue is "
+                            "considered invalid.",
                         "properties": {
                             "code": {
                                 "type": "boolean",
