@@ -60,6 +60,9 @@ class MetaVersion(ABCMeta):
                        for k, v in cls.graph.items())
             assert "" in cls.graph
 
+    def __str__(cls):
+        return f"v{cls.major}.{cls.minor}"
+
     def __le__(cls, other):
         if isinstance(other, type) and \
            (issubclass(cls, other) or issubclass(other, cls)):

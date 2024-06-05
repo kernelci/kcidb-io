@@ -1,8 +1,11 @@
-"""Kernel CI reporting I/O schema v4.2"""
+"""Kernel CI reporting I/O schema v4.4"""
 
-from kcidb_io.schema.v04_01 import Version as PreviousVersion
+from kcidb_io.schema.v04_03 import Version as PreviousVersion
+
+# It's OK, pylint: disable=too-many-lines
 
 
+# Of course, we need that, pylint: disable=too-many-ancestors
 class Version(PreviousVersion):
     """Version"""
 
@@ -41,6 +44,10 @@ class Version(PreviousVersion):
             "not required, and no default values should be assumed for them. "
             "At the same time, no properties can be null.\n"
             "\n"
+            "Any fields with names starting with an underscore \"_\" are "
+            "considered metadata, are ignored on submission, and are not "
+            "loaded into, or retrieved from the database by default.\n"
+            "\n"
             "Extra free-form data can be stored under \"misc\" fields "
             "associated with various objects throughout the schema, if "
             "necessary. That data could later be used as the basis for "
@@ -48,6 +55,60 @@ class Version(PreviousVersion):
         "type": "object",
 
         "$defs": {
+            # A git commit hash
+            "git_commit_hash": {
+                "type": "string",
+                "description": "The full hash of a Git commit",
+                "pattern": f"^{PreviousVersion.git_commit_hash_pattern}$",
+                "examples": [
+                    "eee8fd0dcb82a6523d0f6e9b94facaa3877e9906",
+                ]
+            },
+            # A patchset hash (sha256)
+            "patchset_hash": {
+                "type": "string",
+                "description":
+                    "The patchset hash.\n"
+                    "\n"
+                    "A sha256 hash over newline-terminated sha256 hashes of "
+                    "each patch from a patchset applied to a git commit, in "
+                    "order. E.g. generated with this shell command: "
+                    "\"sha256sum *.patch | cut -c-64 | sha256sum | "
+                    "cut -c-64\".\n"
+                    "\n"
+                    "An empty string, if no patches were applied to "
+                    "the commit.\n",
+                "pattern": f"^$|^{PreviousVersion.sha256_pattern}$",
+                "examples": [
+                    "",
+                    "903638c087335b10293663c682b9aa0076f9f7be478a8"
+                    "e7828bc22e12d301b42"
+                ],
+            },
+            # An ID of a revision
+            "revision_id": {
+                "description": "A (composite) revision ID",
+                "type": "object",
+                "properties": {
+                    "git_commit_hash": {
+                        "description":
+                            "The full commit hash of the revision's base "
+                            "source code",
+                        "$ref": "#/$defs/git_commit_hash"
+                    },
+                    "patchset_hash": {
+                        "description":
+                            "The hash of the patchset applied on top of the "
+                            "revision's commit, or empty string if none.",
+                        "$ref": "#/$defs/patchset_hash",
+                    },
+                },
+                "additionalProperties": False,
+                "required": [
+                    "git_commit_hash",
+                    "patchset_hash",
+                ],
+            },
             # A named remote resource
             "resource": {
                 "title": "resource",
@@ -157,6 +218,16 @@ class Version(PreviousVersion):
                     "multiple maillists.\n",
                 "type": "object",
                 "properties": {
+                    "_timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description":
+                            "The last time the checkout was updated in the "
+                            "database.",
+                        "examples": [
+                            "2020-08-14T23:08:06.967000+00:00",
+                        ],
+                    },
                     "id": {
                         "type": "string",
                         "description":
@@ -206,12 +277,10 @@ class Version(PreviousVersion):
                         ],
                     },
                     "git_commit_hash": {
-                        "type": "string",
                         "description":
                             "The full commit hash of the checked out base "
                             "source code",
-                        "pattern":
-                            f"^{PreviousVersion.git_commit_hash_pattern}$",
+                        "$ref": "#/$defs/git_commit_hash",
                     },
                     "git_commit_name": {
                         "type": "string",
@@ -226,6 +295,19 @@ class Version(PreviousVersion):
                             "The Git repository branch from which the commit "
                             "with the base source code was checked out."
                     },
+                    "git_commit_generation": {
+                        "type": "integer",
+                        "description":
+                            "The generation number of the checked out "
+                            "commit within its repository branch, as tracked "
+                            "by the origin.\n"
+                            "\n"
+                            "Commits later in history of the branch must "
+                            "have a larger generation number than earlier "
+                            "commits. Having this number specified enables "
+                            "regression detection along the reports for the "
+                            "branch coming from a particular origin.\n",
+                    },
                     "patchset_files": {
                         "description":
                             "List of patch files representing the patchset "
@@ -235,7 +317,6 @@ class Version(PreviousVersion):
                         "$ref": "#/$defs/resource_list"
                     },
                     "patchset_hash": {
-                        "type": "string",
                         "description":
                             "The patchset hash.\n"
                             "\n"
@@ -247,12 +328,7 @@ class Version(PreviousVersion):
                             "\n"
                             "An empty string, if no patches were applied to "
                             "the checked out base source code.\n",
-                        "pattern": f"^$|^{PreviousVersion.sha256_pattern}$",
-                        "examples": [
-                            "",
-                            "903638c087335b10293663c682b9aa0076f9f7be478a8"
-                            "e7828bc22e12d301b42"
-                        ],
+                        "$ref": "#/$defs/patchset_hash",
                     },
                     "message_id": {
                         "type": "string",
@@ -343,6 +419,16 @@ class Version(PreviousVersion):
                 "description": "A build of a source code checkout",
                 "type": "object",
                 "properties": {
+                    "_timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description":
+                            "The last time the build was updated in the "
+                            "database.",
+                        "examples": [
+                            "2020-08-14T23:08:06.967000+00:00",
+                        ],
+                    },
                     "checkout_id": {
                         "type": "string",
                         "description":
@@ -501,6 +587,16 @@ class Version(PreviousVersion):
                     "("" - the empty string).",
                 "type": "object",
                 "properties": {
+                    "_timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description":
+                            "The last time the test was updated in the "
+                            "database.",
+                        "examples": [
+                            "2020-08-14T23:08:06.967000+00:00",
+                        ],
+                    },
                     "build_id": {
                         "type": "string",
                         "description":
@@ -648,6 +744,16 @@ class Version(PreviousVersion):
                     "An issue found in reports.",
                 "type": "object",
                 "properties": {
+                    "_timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description":
+                            "The last time the issue was updated in the "
+                            "database.",
+                        "examples": [
+                            "2020-08-14T23:08:06.967000+00:00",
+                        ],
+                    },
                     "id": {
                         "type": "string",
                         "description":
@@ -700,7 +806,8 @@ class Version(PreviousVersion):
                         "type": "object",
                         "description":
                             "Layers of the execution stack responsible "
-                            "for the issue.",
+                            "for the issue. If all are false, the issue is "
+                            "considered invalid.",
                         "properties": {
                             "code": {
                                 "type": "boolean",
@@ -757,6 +864,16 @@ class Version(PreviousVersion):
                     "An incident - an issue occurence/absence.",
                 "type": "object",
                 "properties": {
+                    "_timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description":
+                            "The last time the incident was updated in the "
+                            "database.",
+                        "examples": [
+                            "2020-08-14T23:08:06.967000+00:00",
+                        ],
+                    },
                     "id": {
                         "type": "string",
                         "description":
@@ -830,6 +947,105 @@ class Version(PreviousVersion):
                     "issue_version",
                 ],
             },
+            # A transition
+            "transition": {
+                "title": "transition",
+                "description":
+                    "A transition of issue presence along revision history.",
+                "type": "object",
+                "properties": {
+                    "_timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description":
+                            "The last time the transition was updated in the "
+                            "database.",
+                        "examples": [
+                            "2020-08-14T23:08:06.967000+00:00",
+                        ],
+                    },
+                    "id": {
+                        "type": "string",
+                        "description":
+                            "Transition ID\n"
+                            "\n"
+                            "Must start with a non-empty string identifying "
+                            "the CI system which submitted the transition, "
+                            "followed by a colon ':' character. The rest of "
+                            "the string is generated by the origin CI "
+                            "system, and must identify the transition "
+                            "uniquely among all transitions, coming from "
+                            "that CI system.\n",
+                        "pattern": f"^{PreviousVersion.origin_id_pattern}$",
+                    },
+                    "version": {
+                        "type": "integer",
+                        "description":
+                            "The modification version number of the "
+                            "transition.",
+                        "minimum": 0,
+                    },
+                    "origin": {
+                        "type": "string",
+                        "description":
+                            "The name of the CI system which submitted "
+                            "the transition",
+                        "pattern": f"^{PreviousVersion.origin_pattern}$",
+                    },
+                    "issue_id": {
+                        "type": "string",
+                        "description":
+                            "The ID of the appearing/disappearing issue. "
+                            "Empty string to mark transition invalid.",
+                        "pattern": f"^({PreviousVersion.origin_id_pattern})?$",
+                    },
+                    "issue_version": {
+                        "type": "integer",
+                        "description":
+                            "The modification version number of the "
+                            "appearing/disappearing issue.",
+                        "minimum": 0,
+                    },
+                    "appearance": {
+                        "type": "boolean",
+                        "description":
+                            "True if the transition describes an issue "
+                            "appearance (a regression), false if it "
+                            "describes an issue disappearance (a recovery)."
+                    },
+                    "revision_before": {
+                        "description":
+                            "ID of the last-known revision before the "
+                            "transition",
+                        "$ref": "#/$defs/revision_id",
+                    },
+                    "revision_after": {
+                        "description":
+                            "ID of the first-known revision after the "
+                            "transition",
+                        "$ref": "#/$defs/revision_id",
+                    },
+                    "comment": {
+                        "type": "string",
+                        "description":
+                            "A human-readable comment regarding the "
+                            "transition.",
+                    },
+                    "misc": {
+                        "type": "object",
+                        "description":
+                            "Miscellaneous extra data about the transition.",
+                    },
+                },
+                "additionalProperties": False,
+                "required": [
+                    "id",
+                    "version",
+                    "origin",
+                    "issue_id",
+                    "issue_version",
+                ],
+            },
         },
 
         "properties": {
@@ -892,6 +1108,11 @@ class Version(PreviousVersion):
                 "type": "array",
                 "items": {"$ref": "#/$defs/incident"},
             },
+            "transitions": {
+                "description": "List of transitions",
+                "type": "array",
+                "items": {"$ref": "#/$defs/transition"},
+            },
         },
         "additionalProperties": False,
         "required": [
@@ -905,6 +1126,7 @@ class Version(PreviousVersion):
         "checkouts": ["builds"],
         "builds": ["tests", "incidents"],
         "tests": ["incidents"],
-        "issues": ["incidents"],
+        "issues": ["incidents", "transitions"],
         "incidents": [],
+        "transitions": [],
     }
