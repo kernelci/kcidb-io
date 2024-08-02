@@ -2,6 +2,8 @@
 
 from kcidb_io.schema.v04_03 import Version as PreviousVersion
 
+# It's OK, pylint: disable=too-many-lines
+
 
 # Of course, we need that, pylint: disable=too-many-ancestors
 class Version(PreviousVersion):
@@ -633,6 +635,111 @@ class Version(PreviousVersion):
                     "status": {
                         "description": "Test status",
                         "$ref": "#/$defs/status",
+                    },
+                    "number": {
+                        "description":
+                            "The numerical output produced by the test.\n"
+                            "\n"
+                            "The meaning of the output is determined by the "
+                            "particular test. Should only be considered when "
+                            "the test has actually executed. That is, with a "
+                            "\"FAIL\", \"ERROR\", \"PASS\", or \"DONE\" "
+                            "status only. Normally \"DONE\" should be used, "
+                            "when it's the main and not an auxiliary output.",
+                        "type": "object",
+                        "properties": {
+                            "value": {
+                                "description":
+                                    "The floating-point output value.\n"
+                                    "\n"
+                                    "The receiving system should dedicate at "
+                                    "least 64 bits for its storage.",
+                                "type": "number",
+                            },
+                            "unit": {
+                                "description":
+                                    "The (compound) unit symbol(s) the value "
+                                    "is measured in.\n"
+                                    "\n"
+                                    "If includes unit prefixes, "
+                                    "they should be used consistently to "
+                                    "allow comparison of the values.\n"
+                                    "\n"
+                                    "Alternatively, the prefixes can be "
+                                    "omitted from the unit, and the "
+                                    "\"prefix\" can be specified. Based on "
+                                    "that, and on the value itself, "
+                                    "an appropriate prefix will be added to "
+                                    "the unit string and the value will be "
+                                    "scaled, when displaying.\n"
+                                    "\n"
+                                    "If not specified, the value is "
+                                    "considered dimensionless.",
+                                "type": "string",
+                                "examples": [
+                                    "s",
+                                    "GB",
+                                    "MiB",
+                                    "B/s",
+                                    "IOPS",
+                                ],
+                            },
+                            "prefix": {
+                                "description":
+                                    "The type of prefix to add to the "
+                                    "unit, after the value is scaled. "
+                                    "If unit is not specified, the prefix "
+                                    "alone is used in its place.\n"
+                                    "\n"
+                                    "If \"binary\", the value display "
+                                    "scaling should be 1024-based, and the "
+                                    "added prefix - binary. "
+                                    "E.g. Ki, Mi, Gi, etc.\n"
+                                    "\n"
+                                    "If \"metric\" the value display scaling "
+                                    "should be 10-based, and the added "
+                                    "prefix - metric. E.g. K, M, G, etc.\n"
+                                    "\n"
+                                    "No scaling or prefix is applied, "
+                                    "if not specified.",
+                                "type": "string",
+                                "enum": ["metric", "binary"],
+                            },
+                        },
+                        "required": ["value"],
+                        "additionalProperties": False,
+                        "examples": [
+                            {
+                                "value": 42,
+                                # Display: 42
+                            },
+                            {
+                                "value": 3.14159,
+                                # Display: 3.14159
+                            },
+                            {
+                                "value": 720,
+                                "unit": "KB",
+                                # Display: 720 KB
+                            },
+                            {
+                                "value": 145000,
+                                "prefix": "metric"
+                                # Display: 145 K
+                            },
+                            {
+                                "value": 1.6e-7,
+                                "unit": "s",
+                                "prefix": "metric",
+                                # Display: 160 ns
+                            },
+                            {
+                                "value": 5.12e5,
+                                "unit": "B",
+                                "prefix": "binary",
+                                # Display: 500 KiB
+                            },
+                        ],
                     },
                     "waived": {
                         "type": "boolean",
