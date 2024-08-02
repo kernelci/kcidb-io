@@ -574,6 +574,32 @@ class Version(PreviousVersion):
                             "amount of memory/storage/CPUs, for each host; "
                             "process environment variables, etc.",
                         "properties": {
+                            "compatible": {
+                                "description":
+                                    "The values from the root-level "
+                                    "'compatible' property of the system's "
+                                    "device tree, if any, in the same order. "
+                                    "E.g. the contents of "
+                                    "/proc/device-tree/compatible with "
+                                    "each zero-terminated string as the "
+                                    "array's element.",
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "description":
+                                        "A single value from device tree "
+                                        "root-level 'compatible' property",
+                                    "pattern": "^[^ ]+(,[^ ]+)*$"
+                                },
+                                "examples": [
+                                    [
+                                        "zyxel,nsa325",
+                                        "marvell,kirkwood-88f6282",
+                                        "marvell,kirkwood"
+                                    ],
+                                    ["yna,cu1830-neo", "ingenic,x1830"],
+                                ],
+                            },
                             "comment": {
                                 "type": "string",
                                 "description":
