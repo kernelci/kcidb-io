@@ -2,6 +2,8 @@
 
 from kcidb_io.schema.v04_03 import Version as PreviousVersion
 
+# It's OK, pylint: disable=too-many-lines
+
 
 # Of course, we need that, pylint: disable=too-many-ancestors
 class Version(PreviousVersion):
@@ -633,6 +635,47 @@ class Version(PreviousVersion):
                     "status": {
                         "description": "Test status",
                         "$ref": "#/$defs/status",
+                    },
+                    "value": {
+                        "description":
+                            "The value measured by the test.\n"
+                            "\n"
+                            "The meaning of the value is determined by the "
+                            "particular test. Should only be considered when "
+                            "the test has actually executed. That is, with a "
+                            "\"FAIL\", \"ERROR\", \"PASS\", or \"DONE\" "
+                            "status only. Normally \"DONE\" should be used, "
+                            "when the value is the test's output, and not an "
+                            "auxilary value.\n"
+                            "\n"
+                            "Each property inside the value corresponds to a "
+                            "data type. At least one must be specified, but "
+                            "if more than one type property is set, each is "
+                            "considered a different representation of the "
+                            "*same* value, and not a different value. E.g. "
+                            "these can be specified at the same time: "
+                            "\"integer\": 1, \"number\": 1, \"boolean\": "
+                            "true, \"string\": \"true\".\n"
+                            "\n"
+                            "Specifying multiple types at once can be used "
+                            "to assist transitioning test output to a "
+                            "different type, but in normal use only one of "
+                            "them should be supplied.",
+                        "type": "object",
+                        "properties": {
+                            "integer": {"type": "integer"},
+                            "number": {"type": "number"},
+                            "string": {"type": "string"},
+                            "boolean": {"type": "boolean"},
+                        },
+                        "minProperties": 1,
+                        "additionalProperties": False,
+                        "examples": [
+                            {"integer": 42},
+                            {"string": "blue"},
+                            {"integer": 2022, "string": "2022"},
+                            {"boolean": True, "string": "true"},
+                        ],
                     },
                     "waived": {
                         "type": "boolean",
