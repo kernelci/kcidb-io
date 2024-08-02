@@ -164,7 +164,7 @@ class Version(PreviousVersion):
                         "examples": [
                             "https://git.kernel.org/pub/scm/linux/kernel/git/"
                             "torvalds/linux.git",
-                        ],
+                        ],  # noqa: E122, silly flake8
                     },
                     "git_commit_hash": {
                         "type": "string",
