@@ -237,11 +237,45 @@ class Version(PreviousVersion):
                             "the checked out base source code, as would be "
                             "output by \"git describe\", at the checkout time."
                     },
+                    "git_commit_tags": {
+                        "type": "array",
+                        "description":
+                            "The list of (annotated) tags, found in the "
+                            "checked-out repository, pointing directly "
+                            "at the commit being checked out. I.e. as "
+                            "output by \"git tag --points-at <commit>\".",
+                        "items": {
+                            "type": "string",
+                            "description":
+                                "A git tag pointing at the checked-out commit"
+                        },
+                    },
+                    "git_commit_message": {
+                        "type": "string",
+                        "description":
+                            "The complete message of the commit being "
+                            "checked-out, both the subject and the body. "
+                            "I.e. as output by \"git show -s --format=%B\".",
+                    },
                     "git_repository_branch": {
                         "type": "string",
                         "description":
                             "The Git repository branch from which the commit "
                             "with the base source code was checked out."
+                    },
+                    "git_repository_branch_tip": {
+                        "type": "boolean",
+                        "description":
+                            "True if at the moment of checkout (specified in "
+                            "\"start_time\") the checked out commit was at "
+                            "the tip of the specified branch in the "
+                            "specified repository. False if it was further "
+                            "back in history.\n"
+                            "\n"
+                            "This information is used to reconstruct the "
+                            "approximate history of the branch changes for "
+                            "display and analyzis, in lieu of actual commit "
+                            "graph walking."
                     },
                     "patchset_files": {
                         "description":
