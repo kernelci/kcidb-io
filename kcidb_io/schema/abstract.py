@@ -30,8 +30,6 @@ class MetaVersion(ABCMeta):
         assert "graph" in _dict, "Version has no own graph"
         super().__init__(name, bases, _dict, **kwargs)
         # We need it for later, pylint: disable=fixme
-        # TODO Remove once users transition to using "graph",
-        cls.tree = cls.graph
         base = bases[0]
         # If this is not the abstract version
         if base is not ABC:
