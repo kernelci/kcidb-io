@@ -57,6 +57,13 @@ class MetaVersion(ABCMeta):
                        all(isinstance(e, str) for e in v)
                        for k, v in cls.graph.items())
             assert "" in cls.graph
+            assert isinstance(cls.id_fields, dict)
+            assert set(cls.graph) - {""} == set(cls.id_fields)
+            assert all(isinstance(fields, dict) and
+                       len(fields) > 0 and
+                       all(isinstance(n, str) and isinstance(t, type)
+                           for n, t in fields.items())
+                       for fields in cls.id_fields.values())
 
     def __str__(cls):
         return f"v{cls.major}.{cls.minor}"
@@ -133,6 +140,8 @@ class Version(ABC, metaclass=MetaVersion):
     # list of the same, with the empty string mapping to a list of topmost
     # object list names.
     graph = None
+    # A map of object names and dictionaries of their ID fields and types
+    id_fields = None
 
     @classmethod
     @abstractmethod

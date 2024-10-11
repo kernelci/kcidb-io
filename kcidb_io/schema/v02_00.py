@@ -549,6 +549,13 @@ class Version(PreviousVersion):
         "tests": []
     }
 
+    # A map of object names and dictionaries of their ID fields and types
+    id_fields = dict(
+        revisions=dict(id=str),
+        builds=dict(id=str),
+        tests=dict(id=str),
+    )
+
     @classmethod
     def _get_version(cls, data):
         """
