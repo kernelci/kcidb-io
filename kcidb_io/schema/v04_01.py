@@ -904,6 +904,6 @@ class Version(PreviousVersion):
         checkouts=dict(id=str),
         builds=dict(id=str),
         tests=dict(id=str),
-        issues=dict(id=str),
+        issues=dict(id=str, version=int),
         incidents=dict(id=str),
     )
