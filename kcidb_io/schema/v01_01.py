@@ -579,6 +579,12 @@ class Version(AbstractVersion):
         "builds": ["tests"],
         "tests": []
     }
+    # A map of object names and dictionaries of their ID fields and types
+    id_fields = dict(
+        revisions=dict(origin=str, origin_id=str),
+        builds=dict(origin=str, origin_id=str),
+        tests=dict(origin=str, origin_id=str),
+    )
 
     @classmethod
     def _get_version(cls, data):

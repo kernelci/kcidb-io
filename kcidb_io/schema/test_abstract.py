@@ -15,12 +15,14 @@ class VersionTestCase(unittest.TestCase):
             minor = 0
             json = dict(title="v1")
             graph = {"": []}
+            id_fields = {}
 
         class V2(V1):
             major = 2
             minor = 0
             json = dict(title="v2")
             graph = {"": []}
+            id_fields = {}
 
             @staticmethod
             def _inherit(data):
@@ -31,12 +33,14 @@ class VersionTestCase(unittest.TestCase):
             minor = 1
             json = dict(title="v2.1")
             graph = {"": []}
+            id_fields = {}
 
         class V3(V2D1):
             major = 3
             minor = 0
             json = dict(title="v3")
             graph = {"": []}
+            id_fields = {}
 
             @staticmethod
             def _inherit(data):
@@ -138,12 +142,14 @@ class VersionTestCase(unittest.TestCase):
             minor = 0
             json = dict(title="v1")
             graph = {"": []}
+            id_fields = {}
 
         class V2A(V1):
             major = 2
             minor = 0
             json = dict(title="v2a")
             graph = {"": []}
+            id_fields = {}
 
             @staticmethod
             def _inherit(data):
@@ -154,6 +160,7 @@ class VersionTestCase(unittest.TestCase):
             minor = 0
             json = dict(title="v2b")
             graph = {"": []}
+            id_fields = {}
 
             @staticmethod
             def _inherit(data):

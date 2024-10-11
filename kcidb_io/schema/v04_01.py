@@ -898,3 +898,12 @@ class Version(PreviousVersion):
         "issues": ["incidents"],
         "incidents": [],
     }
+
+    # A map of object names and dictionaries of their ID fields and types
+    id_fields = dict(
+        checkouts=dict(id=str),
+        builds=dict(id=str),
+        tests=dict(id=str),
+        issues=dict(id=str),
+        incidents=dict(id=str),
+    )

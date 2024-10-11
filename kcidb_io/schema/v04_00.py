@@ -690,6 +690,13 @@ class Version(PreviousVersion):
         "tests": []
     }
 
+    # A map of object names and dictionaries of their ID fields and types
+    id_fields = dict(
+        checkouts=dict(id=str),
+        builds=dict(id=str),
+        tests=dict(id=str),
+    )
+
     @staticmethod
     def _inherit(data):
         """
