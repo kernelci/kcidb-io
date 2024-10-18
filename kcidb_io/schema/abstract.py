@@ -277,14 +277,23 @@ class Version(ABC, metaclass=MetaVersion):
 
         Returns:
             A dictionary of object list names (types), and lists of IDs of
-            corresponding objects from the dataset.
+            objects in the data set. Each ID is either a tuple of values or a
+            single value (equivalent to a single-value tuple). The values
+            match the types, the order, and the number of the object's ID
+            fields as described by the schema's "id_fields" attribute.
         """
         assert cls.is_compatible(data)
         assert LIGHT_ASSERTS or cls.is_valid(data)
         return {
-            obj_list_name: [obj["id"] for obj in data[obj_list_name]]
-            for obj_list_name in cls.get_exactly_compatible(data).graph
-            if obj_list_name and obj_list_name in data
+            obj_list_name: [
+                obj[list(id_fields)[0]]
+                if len(id_fields) == 1 else
+                tuple(obj[n] for n in id_fields)
+                for obj in data[obj_list_name]
+            ]
+            for obj_list_name, id_fields in
+            cls.get_exactly_compatible(data).id_fields.items()
+            if data.get(obj_list_name, [])
         }
 
     @classmethod
