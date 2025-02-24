@@ -104,7 +104,7 @@ class Version(PreviousVersion):
                 "items": {"$ref": "#/$defs/resource"},
             },
 
-            # Status of a test run
+            # Status of a test or build run
             "status": {
                 "title": "status",
                 "type": "string",
@@ -510,11 +510,9 @@ class Version(PreviousVersion):
                             "                                           ^\n"
                         ],
                     },
-                    "valid": {
-                        "type": "boolean",
-                        "description":
-                            "True if the build is valid, i.e. if it could"
-                            " be completed. False if not.",
+                    "status": {
+                        "description": "Build status",
+                        "$ref": "#/$defs/status",
                     },
                     "misc": {
                         "type": "object",
@@ -1123,6 +1121,11 @@ class Version(PreviousVersion):
         # Inherit checkouts
         for checkout in data.get("checkouts", []):
             checkout.pop("contacts", None)
+
+        # Inherit builds
+        for build in data.get('builds', []):
+            if 'valid' in build:
+                build['status'] = ('FAIL', 'PASS')[build.pop('valid')]
 
         # Inherit issues
         for issue in data.get("issues", []):

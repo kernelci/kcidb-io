@@ -81,3 +81,54 @@ def test_build_valid_test_status_removal():
     invalid_upgraded_data2 = old_data2.copy()
     invalid_upgraded_data2.update(**Version.new())
     assert not Version.is_valid_exactly(invalid_upgraded_data2)
+
+
+def test_build_valid_upgrade():
+    """Test upgrading build valid property"""
+    old_data = dict(
+        **Version.previous.new(),
+        builds=[
+            dict(
+                id='origin:valid_missing',
+                origin='origin',
+                checkout_id='origin:1',
+            ),
+            dict(
+                id='origin:valid_false',
+                origin='origin',
+                checkout_id='origin:1',
+                valid=False,
+            ),
+            dict(
+                id='origin:valid_true',
+                origin='origin',
+                checkout_id='origin:1',
+                valid=True,
+            ),
+        ]
+    )
+    new_data = dict(
+        **Version.new(),
+        builds=[
+            dict(
+                id='origin:valid_missing',
+                origin='origin',
+                checkout_id='origin:1',
+            ),
+            dict(
+                id='origin:valid_false',
+                origin='origin',
+                checkout_id='origin:1',
+                status='FAIL',
+            ),
+            dict(
+                id='origin:valid_true',
+                origin='origin',
+                checkout_id='origin:1',
+                status='PASS',
+            ),
+        ]
+    )
+    assert Version.previous.is_valid_exactly(old_data)
+    assert Version.is_valid_exactly(new_data)
+    assert Version.upgrade(old_data) == new_data
