@@ -331,22 +331,6 @@ class Version(PreviousVersion):
                             "2020-08-14T23:08:06.967000+00:00",
                         ],
                     },
-                    "contacts": {
-                        "type": "array",
-                        "description":
-                            "List of e-mail addresses of contacts concerned "
-                            "with the checked out source code, such as "
-                            "authors, reviewers, and mail lists",
-                        "items": {
-                            "type": "string",
-                            "description":
-                                "An e-mail address of a contact concerned "
-                                "with this code, e.g. an author, a reviewer, "
-                                "or a mail list, as in "
-                                "https://tools.ietf.org/html/rfc5322"
-                                "#section-3.4"
-                        },
-                    },
                     "log_url": {
                         "type": "string",
                         "format": "uri",
@@ -1144,4 +1128,8 @@ class Version(PreviousVersion):
         Returns:
             The inherited data.
         """
+        # Inherit checkouts
+        for checkout in data.get("checkouts", []):
+            checkout.pop("contacts", None)
+
         return data
