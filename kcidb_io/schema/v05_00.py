@@ -20,6 +20,13 @@ class Version(PreviousVersion):
     # Test path regular expression
     test_path_re = re.compile("^([a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*)?$")
 
+    # A regular expression pattern matching strings containing accepted Git
+    # repository URLs
+    git_repository_url_pattern = "(https|git)://[^\\0]*"
+
+    # A regular expression pattern matching strings containing an object ID
+    origin_id_pattern = f"{PreviousVersion.origin_pattern}:[^\\0]*"
+
     # JSON schema for I/O data
     json = {
         "title": "kcidb",
@@ -72,7 +79,7 @@ class Version(PreviousVersion):
                             "Resource name. Must be usable as a local file "
                             "name for the downloaded resource. Cannot be "
                             "empty. Should not include directories.",
-                        "pattern": "^[^/]+$",
+                        "pattern": "^[^/\\0]+$",
                     },
                     "url": {
                         "type": "string",
@@ -191,7 +198,7 @@ class Version(PreviousVersion):
                             "origin CI system, and must identify the checkout "
                             "uniquely among all checkouts, coming from "
                             "that CI system.\n",
-                        "pattern": f"^{PreviousVersion.origin_id_pattern}$",
+                        "pattern": f"^{origin_id_pattern}$",
                     },
                     "origin": {
                         "type": "string",
@@ -206,6 +213,7 @@ class Version(PreviousVersion):
                             "The widely-recognized name of the sub-tree "
                             "(fork) of the main code tree where the checked "
                             "out base source code came from.",
+                        "pattern": "^[^\\0]*$",
                         "examples": [
                             "net-next",
                             "rdma",
@@ -221,7 +229,7 @@ class Version(PreviousVersion):
                             "possible https:// URL, or, if that's not "
                             "available, the shortest possible git:// URL.",
                         "pattern":
-                            f"^{PreviousVersion.git_repository_url_pattern}$",
+                            f"^{git_repository_url_pattern}$",
                         "examples": [
                             "https://git.kernel.org/pub/scm/linux/kernel/git/"
                             "torvalds/linux.git",
@@ -240,7 +248,9 @@ class Version(PreviousVersion):
                         "description":
                             "A human-readable name of the commit containing "
                             "the checked out base source code, as would be "
-                            "output by \"git describe\", at the checkout time."
+                            "output by \"git describe\", at the checkout "
+                            "time.",
+                        "pattern": "^[^\\0]*$",
                     },
                     "git_commit_tags": {
                         "type": "array",
@@ -252,7 +262,9 @@ class Version(PreviousVersion):
                         "items": {
                             "type": "string",
                             "description":
-                                "A git tag pointing at the checked-out commit"
+                                "A git tag pointing at the checked-out "
+                                "commit",
+                            "pattern": "^[^\\0]*$",
                         },
                     },
                     "git_commit_message": {
@@ -261,12 +273,14 @@ class Version(PreviousVersion):
                             "The complete message of the commit being "
                             "checked-out, both the subject and the body. "
                             "I.e. as output by \"git show -s --format=%B\".",
+                        "pattern": "^[^\\0]*$",
                     },
                     "git_repository_branch": {
                         "type": "string",
                         "description":
                             "The Git repository branch from which the commit "
-                            "with the base source code was checked out."
+                            "with the base source code was checked out.",
+                        "pattern": "^[^\\0]*$",
                     },
                     "git_repository_branch_tip": {
                         "type": "boolean",
@@ -325,7 +339,9 @@ class Version(PreviousVersion):
                         "description":
                             "A human-readable comment regarding the checkout. "
                             "E.g. the checked out release version, or the "
-                            "subject of the message with the applied patchset."
+                            "subject of the message with the applied "
+                            "patchset.",
+                        "pattern": "^[^\\0]*$",
                     },
                     "start_time": {
                         "type": "string",
@@ -350,6 +366,7 @@ class Version(PreviousVersion):
                         "description":
                             "A part of the log file of the checkout attempt "
                             "most relevant to its outcome.",
+                        "pattern": "^[^\\0]*$",
                         "examples": [
                             "error: patch failed: "
                             "arch/arm64/boot/dts/qcom/sc7180.dtsi:510\n"
@@ -399,7 +416,7 @@ class Version(PreviousVersion):
                             "ID of the built source code checkout. The "
                             "checkout must be valid for the build to be "
                             "considered valid.",
-                        "pattern": f"^{PreviousVersion.origin_id_pattern}$",
+                        "pattern": f"^{origin_id_pattern}$",
                     },
                     "id": {
                         "type": "string",
@@ -412,7 +429,7 @@ class Version(PreviousVersion):
                             "rest of the string is generated by the origin "
                             "CI system, and must identify the build uniquely "
                             "among all builds, coming from that CI system.\n",
-                        "pattern": f"^{PreviousVersion.origin_id_pattern}$",
+                        "pattern": f"^{origin_id_pattern}$",
                     },
                     "origin": {
                         "type": "string",
@@ -424,7 +441,8 @@ class Version(PreviousVersion):
                     "comment": {
                         "type": "string",
                         "description":
-                            "A human-readable comment regarding the build"
+                            "A human-readable comment regarding the build",
+                        "pattern": "^[^\\0]*$",
                     },
                     "start_time": {
                         "type": "string",
@@ -452,12 +470,14 @@ class Version(PreviousVersion):
                         "description":
                             "Full shell command line used to make the build, "
                             "including environment variables",
+                        "pattern": "^[^\\0]*$",
                     },
                     "compiler": {
                         "type": "string",
                         "description":
                             "Name and version of the compiler used to "
                             "make the build",
+                        "pattern": "^[^\\0]*$",
                     },
                     "input_files": {
                         "description":
@@ -475,6 +495,7 @@ class Version(PreviousVersion):
                         "description":
                             "A name describing the build configuration "
                             "options.",
+                        "pattern": "^[^\\0]*$",
                     },
                     "config_url": {
                         "type": "string",
@@ -495,6 +516,7 @@ class Version(PreviousVersion):
                             "A part of the log file of the build most "
                             "relevant to its "
                             "outcome.",
+                        "pattern": "^[^\\0]*$",
                         "examples": [
                             "In file included from "
                             "./arch/arm64/include/asm/processor.h:35:\n"
@@ -564,7 +586,7 @@ class Version(PreviousVersion):
                         "description":
                             "ID of the tested build. The build must be "
                             "valid for the test run to be considered valid.",
-                        "pattern": f"^{PreviousVersion.origin_id_pattern}$",
+                        "pattern": f"^{origin_id_pattern}$",
                     },
                     "id": {
                         "type": "string",
@@ -578,7 +600,7 @@ class Version(PreviousVersion):
                             "origin CI system, and must identify the test "
                             "run uniquely among all test runs, coming from "
                             "that CI system.\n",
-                        "pattern": f"^{PreviousVersion.origin_id_pattern}$",
+                        "pattern": f"^{origin_id_pattern}$",
                     },
                     "origin": {
                         "type": "string",
@@ -610,7 +632,7 @@ class Version(PreviousVersion):
                                     "description":
                                         "A single value from device tree "
                                         "root-level 'compatible' property",
-                                    "pattern": "^[^ ]+(,[^ ]+)*$"
+                                    "pattern": "^[^ \\0]+(,[^ \\0]+)*$"
                                 },
                                 "examples": [
                                     [
@@ -625,7 +647,8 @@ class Version(PreviousVersion):
                                 "type": "string",
                                 "description":
                                     "A human-readable comment regarding the "
-                                    "environment."
+                                    "environment.",
+                                "pattern": "^[^\\0]*$",
                             },
                             "misc": {
                                 "type": "object",
@@ -654,7 +677,8 @@ class Version(PreviousVersion):
                     "comment": {
                         "type": "string",
                         "description":
-                            "A human-readable comment regarding the test run"
+                            "A human-readable comment regarding the test run",
+                        "pattern": "^[^\\0]*$",
                     },
                     "log_url": {
                         "type": "string",
@@ -674,6 +698,7 @@ class Version(PreviousVersion):
                             "A part of the test output/log file "
                             "(which could be) referenced by \"log_url\", "
                             "most relevant to the test outcome.",
+                        "pattern": "^[^\\0]*$",
                         "examples": [
                             "netns_breakns_ns_exec_ipv4_ioctl FAIL 2\n",
                             "kernel BUG at net/core/dev.c:2648!\n",
@@ -723,6 +748,7 @@ class Version(PreviousVersion):
                                     "If not specified, the value is "
                                     "considered dimensionless.",
                                 "type": "string",
+                                "pattern": "^[^\\0]*$",
                                 "examples": [
                                     "s",
                                     "GB",
@@ -847,7 +873,7 @@ class Version(PreviousVersion):
                             "origin CI system, and must identify the issue"
                             " uniquely among all issues, coming from "
                             "that CI system.\n",
-                        "pattern": f"^{PreviousVersion.origin_id_pattern}$",
+                        "pattern": f"^{origin_id_pattern}$",
                     },
                     "version": {
                         "type": "integer",
@@ -878,6 +904,7 @@ class Version(PreviousVersion):
                         "type": "string",
                         "description":
                             "The subject of the report describing the issue.",
+                        "pattern": "^[^\\0]*$",
                         "examples": [
                             "C-media USB audio device stops working from "
                             "5.2.0-rc3 onwards"
@@ -914,7 +941,8 @@ class Version(PreviousVersion):
                         "type": "string",
                         "description":
                             "A human-readable comment regarding the issue. "
-                            "E.g. a brief description, or a report subject."
+                            "E.g. a brief description, or a report subject.",
+                        "pattern": "^[^\\0]*$",
                     },
                     "misc": {
                         "type": "object",
@@ -959,7 +987,7 @@ class Version(PreviousVersion):
                             "origin CI system, and must identify the incident"
                             " uniquely among all incidents, coming from "
                             "that CI system.\n",
-                        "pattern": f"^{PreviousVersion.origin_id_pattern}$",
+                        "pattern": f"^{origin_id_pattern}$",
                     },
                     "origin": {
                         "type": "string",
@@ -972,7 +1000,7 @@ class Version(PreviousVersion):
                         "type": "string",
                         "description":
                             "The ID of the occurring/absent issue.",
-                        "pattern": f"^{PreviousVersion.origin_id_pattern}$",
+                        "pattern": f"^{origin_id_pattern}$",
                     },
                     "issue_version": {
                         "type": "integer",
@@ -986,14 +1014,14 @@ class Version(PreviousVersion):
                         "description":
                             "The ID of the build object exhibiting/missing "
                             "the issue.",
-                        "pattern": f"^{PreviousVersion.origin_id_pattern}$",
+                        "pattern": f"^{origin_id_pattern}$",
                     },
                     "test_id": {
                         "type": "string",
                         "description":
                             "The ID of the test object exhibiting/missing "
                             "the issue.",
-                        "pattern": f"^{PreviousVersion.origin_id_pattern}$",
+                        "pattern": f"^{origin_id_pattern}$",
                     },
                     "present": {
                         "type": "boolean",
@@ -1004,7 +1032,9 @@ class Version(PreviousVersion):
                     "comment": {
                         "type": "string",
                         "description":
-                            "A human-readable comment regarding the incident. "
+                            "A human-readable comment regarding the "
+                            "incident.",
+                        "pattern": "^[^\\0]*$",
                     },
                     "misc": {
                         "type": "object",
@@ -1162,5 +1192,21 @@ class Version(PreviousVersion):
         for issue in data.get("issues", []):
             issue.pop("build_valid", None)
             issue.pop("test_status", None)
+
+        # Prohibit '\0' characters
+        def prohibit_null(data):
+            if isinstance(data, list):
+                for value in data:
+                    prohibit_null(value)
+            elif isinstance(data, dict):
+                for key, value in data.items():
+                    if key != 'misc':
+                        prohibit_null(value)
+            elif isinstance(data, str) and '\0' in data:
+                raise InheritanceImpossible(
+                    f"Cannot inherit a string containing '\0' characters: "
+                    f"{data!r}"
+                )
+        prohibit_null(data)
 
         return data
