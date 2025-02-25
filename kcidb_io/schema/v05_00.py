@@ -919,14 +919,6 @@ class Version(PreviousVersion):
                         },
                         "additionalProperties": False,
                     },
-                    "build_valid": {
-                        "type": "boolean",
-                        "description": "Status to assign to incident builds",
-                    },
-                    "test_status": {
-                        "description": "Status to assign to incident tests",
-                        "$ref": "#/$defs/status",
-                    },
                     "comment": {
                         "type": "string",
                         "description":
@@ -1131,5 +1123,10 @@ class Version(PreviousVersion):
         # Inherit checkouts
         for checkout in data.get("checkouts", []):
             checkout.pop("contacts", None)
+
+        # Inherit issues
+        for issue in data.get("issues", []):
+            issue.pop("build_valid", None)
+            issue.pop("test_status", None)
 
         return data
