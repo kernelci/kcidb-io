@@ -788,18 +788,6 @@ class Version(PreviousVersion):
                             },
                         ],
                     },
-                    "waived": {
-                        "type": "boolean",
-                        "description":
-                            "True if the test status should be ignored.\n"
-                            "\n"
-                            "Could be used for reporting test results without "
-                            "affecting the overall test status and alerting "
-                            "the contacts concerned with the checked out and "
-                            "tested source code. For example, for collecting "
-                            "test reliability statistics when the test is "
-                            "first introduced, or is being fixed.",
-                    },
                     "start_time": {
                         "type": "string",
                         "format": "date-time",
@@ -1133,6 +1121,8 @@ class Version(PreviousVersion):
                 build['status'] = ('FAIL', 'PASS')[build.pop('valid')]
 
         # Inherit tests
+        waived_issue_id = None
+        waived_issue_version = 1
         for test in data.get('tests', []):
             # If the path is invalid in the new schema
             test_path = test.get('path', None)
@@ -1142,6 +1132,31 @@ class Version(PreviousVersion):
                     f"Test path {test_path!r} is invalid, ambiguous, "
                     f"and cannot be inherited as is. Correct and retry."
                 )
+            # Only add incidents for waived tests
+            if not test.pop('waived', None):
+                continue
+            # Add the waived issue, if not added yet
+            if waived_issue_id is None:
+                waived_issue_id = "_:waived"
+                data.setdefault('issues', []).append(dict(
+                    id=waived_issue_id,
+                    origin="_",
+                    version=waived_issue_version,
+                    comment="Test waived as unreliable",
+                ))
+            # Add the incident
+            test_id = test['id']
+            data.setdefault('incidents', []).append(dict(
+                # Raise TypeError if any of these vars are None
+                id=waived_issue_id + ':' +
+                str(waived_issue_version) + ':' +
+                test_id,
+                origin="_",
+                issue_id=waived_issue_id,
+                issue_version=waived_issue_version,
+                test_id=test_id,
+                present=True,
+            ))
 
         # Inherit issues
         for issue in data.get("issues", []):

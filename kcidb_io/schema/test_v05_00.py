@@ -238,3 +238,88 @@ def test_path_restriction():
         data_incorrect_upgraded = data_incorrect.copy()
         data_incorrect_upgraded.update(**Version.new())
         assert not Version.is_valid_exactly(data_incorrect_upgraded)
+
+
+def test_waived():
+    """Test the test's "waived" property is correctly transformed"""
+    new_issues = [dict(
+        id="_:waived",
+        version=1,
+        origin="_",
+        comment="Test waived as unreliable",
+    )]
+    data_list = [
+        (
+            dict(
+                **Version.previous.new(),
+                tests=[dict(
+                    id="origin:waived_missing",
+                    origin="origin",
+                    build_id="origin:1",
+                ),],
+            ),
+            dict(
+                **Version.new(),
+                tests=[dict(
+                    id="origin:waived_missing",
+                    origin="origin",
+                    build_id="origin:1",
+                ),],
+            )
+        ),
+        (
+            dict(
+                **Version.previous.new(),
+                tests=[dict(
+                    id="origin:waived_false",
+                    origin="origin",
+                    build_id="origin:1",
+                    waived=False,
+                ),],
+            ),
+            dict(
+                **Version.new(),
+                tests=[dict(
+                    id="origin:waived_false",
+                    origin="origin",
+                    build_id="origin:1",
+                ),],
+            ),
+        ),
+        (
+            dict(
+                **Version.previous.new(),
+                tests=[dict(
+                    id="origin:waived_true",
+                    origin="origin",
+                    build_id="origin:1",
+                    waived=True,
+                ),],
+            ),
+            dict(
+                **Version.new(),
+                tests=[dict(
+                    id="origin:waived_true",
+                    origin="origin",
+                    build_id="origin:1",
+                ),],
+                issues=new_issues,
+                incidents=[dict(
+                    id="_:waived:1:origin:waived_true",
+                    origin="_",
+                    issue_id="_:waived",
+                    issue_version=1,
+                    test_id="origin:waived_true",
+                    present=True,
+                ),],
+            ),
+        ),
+    ]
+    for old_data, new_data in data_list:
+        assert Version.previous.is_valid_exactly(old_data)
+        if 'waived' in old_data['tests'][0]:
+            invalid_upgraded_data = old_data.copy()
+            invalid_upgraded_data.update(Version.new())
+            assert not Version.is_valid_exactly(invalid_upgraded_data)
+        assert Version.is_valid_exactly(new_data)
+        assert Version.upgrade(old_data) == new_data
