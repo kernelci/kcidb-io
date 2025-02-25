@@ -323,3 +323,54 @@ def test_waived():
             assert not Version.is_valid_exactly(invalid_upgraded_data)
         assert Version.is_valid_exactly(new_data)
         assert Version.upgrade(old_data) == new_data
+
+
+def test_strings_with_null_chars():
+    """Check strings with null characters are rejected"""
+    # We should be testing all the string fields,
+    # but that gets out of sync fast
+    invalid_data_list = [
+        dict(
+            **Version.previous.new(),
+            builds=[dict(
+                id="origin:1",
+                origin="origin",
+                checkout_id="origin:1",
+                log_excerpt="a\0b",
+            ),],
+        ),
+        dict(
+            **Version.previous.new(),
+            tests=[dict(
+                id="origin:1",
+                origin="origin",
+                build_id="origin:1",
+                log_excerpt="a\0b",
+            ),],
+        ),
+        dict(
+            **Version.previous.new(),
+            tests=[dict(
+                id="origin:1",
+                origin="origin",
+                build_id="origin:1",
+                environment=dict(comment="a\0b"),
+            ),],
+        ),
+        dict(
+            **Version.previous.new(),
+            tests=[dict(
+                id="origin:1",
+                origin="origin",
+                build_id="origin:1",
+                environment=dict(compatible=["a\0b"]),
+            ),],
+        ),
+    ]
+    for invalid_data in invalid_data_list:
+        assert Version.previous.is_valid_exactly(invalid_data)
+        with pytest.raises(InheritanceImpossible):
+            Version.upgrade(invalid_data)
+        invalid_upgraded_data = invalid_data.copy()
+        invalid_upgraded_data.update(Version.new())
+        assert not Version.is_valid_exactly(invalid_upgraded_data)
