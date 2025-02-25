@@ -1,6 +1,8 @@
 """Kernel CI reporting I/O schema v5.0"""
 
+import re
 from kcidb_io.schema.v04_05 import Version as PreviousVersion
+from kcidb_io.schema.abstract import InheritanceImpossible
 
 # It's OK, pylint: disable=too-many-lines
 
@@ -14,6 +16,9 @@ class Version(PreviousVersion):
 
     # Minor version number of the schema.
     minor = 0
+
+    # Test path regular expression
+    test_path_re = re.compile("^([a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*)?$")
 
     # JSON schema for I/O data
     json = {
@@ -639,7 +644,7 @@ class Version(PreviousVersion):
                             " E.g. \"ltp.sem01\". The empty string signifies"
                             " the root of the tree, i.e. all tests for "
                             "the build, executed by the origin CI system.",
-                        "pattern": "^[.a-zA-Z0-9_-]*$",
+                        "pattern": test_path_re.pattern,
                         "examples": [
                             "",
                             "ltp",
@@ -1126,6 +1131,17 @@ class Version(PreviousVersion):
         for build in data.get('builds', []):
             if 'valid' in build:
                 build['status'] = ('FAIL', 'PASS')[build.pop('valid')]
+
+        # Inherit tests
+        for test in data.get('tests', []):
+            # If the path is invalid in the new schema
+            test_path = test.get('path', None)
+            if not (test_path is None or
+                    Version.test_path_re.match(test_path)):
+                raise InheritanceImpossible(
+                    f"Test path {test_path!r} is invalid, ambiguous, "
+                    f"and cannot be inherited as is. Correct and retry."
+                )
 
         # Inherit issues
         for issue in data.get("issues", []):
