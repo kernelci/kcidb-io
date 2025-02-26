@@ -121,6 +121,10 @@ class MetaVersion(ABCMeta):
         return tuple(reversed(tuple(cls.lineage)))
 
 
+class InheritanceImpossible(Exception):
+    """Inheritance into new schema is impossible as data is ambiguous"""
+
+
 class Version(ABC, metaclass=MetaVersion):
     """Abstract schema version"""
 
@@ -463,6 +467,11 @@ class Version(ABC, metaclass=MetaVersion):
 
         Returns:
             The inherited data.
+
+        Raises:
+            InheritanceImpossible - the previous schema's data is ambiguous
+                                    and cannot be inherited. Read the message,
+                                    disambiguate/cleanup, and retry.
         """
 
     @classmethod
