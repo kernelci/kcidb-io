@@ -20,9 +20,9 @@ class Version(PreviousVersion):
     # Test path regular expression
     test_path_re = re.compile("^([a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*)?$")
 
-    # A regular expression pattern matching strings containing accepted Git
+    # A regular expression matching strings containing accepted Git
     # repository URLs
-    git_repository_url_pattern = "(https|git)://[^\\0]*"
+    git_repository_url_re = re.compile("https://[^\\0]*")
 
     # A regular expression pattern matching strings containing an object ID
     origin_id_pattern = f"{PreviousVersion.origin_pattern}:[^\\0]*"
@@ -226,10 +226,9 @@ class Version(PreviousVersion):
                         "description":
                             "The URL of the Git repository which contains the "
                             "checked out base source code. The shortest "
-                            "possible https:// URL, or, if that's not "
-                            "available, the shortest possible git:// URL.",
+                            "possible https:// URL.",
                         "pattern":
-                            f"^{git_repository_url_pattern}$",
+                            f"^{git_repository_url_re.pattern}$",
                         "examples": [
                             "https://git.kernel.org/pub/scm/linux/kernel/git/"
                             "torvalds/linux.git",
@@ -1144,6 +1143,14 @@ class Version(PreviousVersion):
         # Inherit checkouts
         for checkout in data.get("checkouts", []):
             checkout.pop("contacts", None)
+            repo_url = checkout.get('git_repository_url', None)
+            if not (repo_url is None or
+                    Version.git_repository_url_re.match(repo_url)):
+                raise InheritanceImpossible(
+                    f"A git_repository_url {repo_url!r} is invalid, and "
+                    f"cannot be inherited as is. Replace with an HTTPS URL "
+                    f"of the repository and retry."
+                )
 
         # Inherit builds
         for build in data.get('builds', []):

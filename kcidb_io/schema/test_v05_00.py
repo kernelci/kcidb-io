@@ -374,3 +374,37 @@ def test_strings_with_null_chars():
         invalid_upgraded_data = invalid_data.copy()
         invalid_upgraded_data.update(Version.new())
         assert not Version.is_valid_exactly(invalid_upgraded_data)
+
+
+def test_git_repo_url_https_req():
+    """Check that only HTTPS URLs are accepted for git_repository_url"""
+    invalid_data = dict(
+        **Version.previous.new(),
+        checkouts=[dict(
+            id="origin:1",
+            origin="origin",
+            git_repository_url="git://git.armlinux.org.uk/"
+            "~rmk/linux-arm.git",
+        ),],
+    )
+    assert Version.previous.is_valid_exactly(invalid_data)
+    with pytest.raises(InheritanceImpossible):
+        Version.upgrade(invalid_data)
+    invalid_upgraded_data = invalid_data.copy()
+    invalid_upgraded_data.update(Version.new())
+    assert not Version.is_valid_exactly(invalid_upgraded_data)
+
+    valid_data = dict(
+        **Version.previous.new(),
+        checkouts=[dict(
+            id="origin:1",
+            origin="origin",
+            git_repository_url="https://git.armlinux.org.uk/"
+            "~rmk/linux-arm.git",
+        ),],
+    )
+    assert Version.previous.is_valid_exactly(invalid_data)
+    valid_upgraded_data = valid_data.copy()
+    valid_upgraded_data.update(Version.new())
+    assert Version.is_valid_exactly(valid_upgraded_data)
+    assert Version.upgrade(valid_data) == valid_upgraded_data
