@@ -3,7 +3,7 @@
 from copy import deepcopy
 from abc import ABC, ABCMeta, abstractmethod
 import jsonschema
-from kcidb_io.misc import LIGHT_ASSERTS
+from kcidb_io.misc import LIGHT_ASSERTS, json_cmp
 
 
 class MetaVersion(ABCMeta):
@@ -527,6 +527,36 @@ class Version(ABC, metaclass=MetaVersion):
         return data
 
     @classmethod
+    def align(cls, first, second, copy_first=True, copy_second=True):
+        """
+        Align schema versions of two datasets: upgrade the dataset with older
+        schema version to the version of the other, if different.
+
+        Args:
+            first:          The first dataset to align.
+            second:         The second dataset to align.
+            copy_first:     If true, the first dataset should be copied before
+                            upgrading.
+            copy_second:    If true, the second dataset should be copied
+                            before upgrading.
+
+        Returns:
+            The schema version both datasets are adhering to, the first
+            dataset, and the second dataset, where one of them is possibly
+            upgraded.
+        """
+        assert cls.is_compatible(first)
+        assert cls.is_compatible(second)
+        v_first = cls.get_exactly_compatible(first)
+        v_second = cls.get_exactly_compatible(second)
+        if copy_first:
+            first = deepcopy(first)
+        if copy_second:
+            second = deepcopy(second)
+        v = max(v_first, v_second)
+        return v, v.upgrade(first, copy=False), v.upgrade(second, copy=False)
+
+    @classmethod
     def merge(cls, target, sources, copy_target=True, copy_sources=True):
         """
         Merge multiple datasets into a destination dataset.
@@ -548,24 +578,67 @@ class Version(ABC, metaclass=MetaVersion):
         assert LIGHT_ASSERTS or cls.is_valid(target)
         if copy_target:
             target = deepcopy(target)
-        target_version = cls.get_exactly_compatible(target)
+        version = cls.get_exactly_compatible(target)
         for source in sources:
             assert cls.is_compatible(source)
             assert LIGHT_ASSERTS or cls.is_valid(source)
-            if copy_sources:
-                source = deepcopy(source)
             # Upgrade both target and source to the same version
-            source_version = cls.get_exactly_compatible(source)
-            if source_version > target_version:
-                target_version = source_version
-                target = target_version.upgrade(target, copy=False)
-            elif source_version < target_version:
-                source = target_version.upgrade(source, copy=False)
+            version, target, source = cls.align(target, source,
+                                                copy_first=False,
+                                                copy_second=copy_sources)
             # Merge the source into the target
-            for obj_list_name in target_version.graph:
+            for obj_list_name in version.graph:
                 if obj_list_name in source:
                     target[obj_list_name] = \
                         target.get(obj_list_name, []) + source[obj_list_name]
-        assert target_version.is_compatible_exactly(target)
-        assert LIGHT_ASSERTS or target_version.is_valid_exactly(target)
+        assert version.is_compatible_exactly(target)
+        assert LIGHT_ASSERTS or version.is_valid_exactly(target)
         return target
+
+    @classmethod
+    def cmp_directly_compatible(cls, first, second):
+        """
+        Compare two datasets directly compatible with this schema version.
+
+        Args:
+            first:          The first dataset to compare.
+            second:         The second dataset to compare.
+
+        Returns: The comparison result, one of:
+            -1 - a < b,
+             0 - a == b,
+             1 - a > b.
+        """
+        assert cls.is_compatible_directly(first)
+        assert cls.is_compatible_directly(second)
+        # NOTE This only works while schema versions keep more-or-less the
+        #      same structure. Otherwise this would need to be customized.
+        return json_cmp(first, second,
+                        # Treat object lists as unordered sets
+                        set_depth=2)
+
+    @classmethod
+    def cmp(cls, first, second, copy_first=True, copy_second=True):
+        """
+        Compare two datasets of this or an earlier schema version.
+
+        Args:
+            first:          The first dataset to compare.
+            second:         The second dataset to compare.
+            copy_first:     If true, the first dataset should be copied before
+                            comparison and possible upgrading. Otherwise the
+                            upgrade will be done in place, if required.
+            copy_second:    If true, the second dataset should be copied
+                            before comparison and possible upgrading.
+                            Otherwise the upgrade will be done in place, if
+                            required.
+
+        Returns: The comparison result, one of:
+            -1 - a < b,
+             0 - a == b,
+             1 - a > b.
+        """
+        version, first, second = cls.align(first, second,
+                                           copy_first=copy_first,
+                                           copy_second=copy_second)
+        return version.cmp_directly_compatible(first, second)
