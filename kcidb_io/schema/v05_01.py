@@ -341,6 +341,26 @@ class Version(PreviousVersion):
                             "2020-08-14T23:08:06.967000+00:00",
                         ],
                     },
+                    "origin_builds_finish_time": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description":
+                            "The time the origin of the checkout finished "
+                            "all the builds it planned for it.",
+                        "examples": [
+                            "2020-08-14T23:08:06.967000+00:00",
+                        ],
+                    },
+                    "origin_tests_finish_time": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description":
+                            "The time the origin of the checkout finished "
+                            "all the tests it planned for it.",
+                        "examples": [
+                            "2020-08-14T23:08:06.967000+00:00",
+                        ],
+                    },
                     "log_url": {
                         "type": "string",
                         "format": "uri",
