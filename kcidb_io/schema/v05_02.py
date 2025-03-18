@@ -15,6 +15,9 @@ class Version(PreviousVersion):
     # Minor version number of the schema.
     minor = PreviousVersion.minor + 1
 
+    # Tree path regular expression
+    path_re = PreviousVersion.test_path_re
+
     # JSON schema for I/O data
     json = {
         "title": "kcidb",
@@ -141,6 +144,20 @@ class Version(PreviousVersion):
                     "a build would be the highest-priority status across all "
                     "its tests.",
                 "enum": ["FAIL", "ERROR", "MISS", "PASS", "DONE", "SKIP"],
+            },
+
+            "path": {
+                "type": "string",
+                "description":
+                    "Dot-separated path through a tree. "
+                    "The empty string signifies "
+                    "the root of the tree.",
+                "pattern": path_re.pattern,
+                "examples": [
+                    "",
+                    "ltp",
+                    "ltp.sem01",
+                ],
             },
 
             # A source code checkout being tested
@@ -669,14 +686,13 @@ class Version(PreviousVersion):
                         "additionalProperties": False,
                     },
                     "path": {
-                        "type": "string",
                         "description":
                             "Dot-separated path to the node in the test "
                             "classification tree the executed test belongs to."
                             " E.g. \"ltp.sem01\". The empty string signifies"
                             " the root of the tree, i.e. all tests for "
                             "the build, executed by the origin CI system.",
-                        "pattern": PreviousVersion.test_path_re.pattern,
+                        "$ref": "#/$defs/path",
                         "examples": [
                             "",
                             "ltp",
