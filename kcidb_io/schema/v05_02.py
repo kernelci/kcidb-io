@@ -915,6 +915,19 @@ class Version(PreviousVersion):
                             "the issue",
                         "pattern": f"^{PreviousVersion.origin_pattern}$",
                     },
+                    "categories": {
+                        "description":
+                            "An array of dot-separated paths pointing to "
+                            "nodes in the categorization tree the issue "
+                            "belongs to. The agreed-upon categories are "
+                            "defined outside the schema.",
+                        "type": "array",
+                        "items": {"$ref": "#/$defs/path"},
+                        "examples": [
+                            ["build.error", "compiler.bug"],
+                            ["runtime.oops", "runtime.driver.networking"],
+                        ],
+                    },
                     "report_url": {
                         "type": "string",
                         "format": "uri",
