@@ -12,6 +12,7 @@ from kcidb_io.schema.v04_05 import Version as V4_5  # noqa: F401
 from kcidb_io.schema.v05_00 import Version as V5_0  # noqa: F401
 from kcidb_io.schema.v05_01 import Version as V5_1  # noqa: F401
 from kcidb_io.schema.v05_02 import Version as V5_2  # noqa: F401
+from kcidb_io.schema.v05_03 import Version as V5_3  # noqa: F401
 
 # Legacy versions
 V1 = V1_1  # noqa: F401
@@ -20,4 +21,4 @@ V3 = V3_0  # noqa: F401
 V4 = V4_0  # noqa: F401
 
 # Latest version of the schema
-LATEST = V5_2
+LATEST = V5_3
