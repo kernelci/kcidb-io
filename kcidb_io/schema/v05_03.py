@@ -853,6 +853,11 @@ class Version(PreviousVersion):
                         "description":
                             "The number of seconds it took to run the test",
                     },
+                    "input_files": {
+                        "description":
+                            "A list of inputs files: rootfs, initram, etc. ",
+                        "$ref": "#/$defs/resource_list"
+                    },
                     "output_files": {
                         "description":
                             "A list of test outputs: logs, dumps, etc. "
