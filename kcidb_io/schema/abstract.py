@@ -2,8 +2,26 @@
 
 from copy import deepcopy
 from abc import ABC, ABCMeta, abstractmethod
+from functools import lru_cache
 import jsonschema
 from kcidb_io.misc import LIGHT_ASSERTS, json_cmp
+
+
+@lru_cache(maxsize=None)
+def _build_validator_for(schema_cls):
+    """Return a compiled Draft7 validator for a given Version subclass.
+
+    Cached per-class via lru_cache; safe across supported Python versions.
+    """
+    try:
+        format_checker = jsonschema.Draft7Validator.FORMAT_CHECKER
+    except AttributeError:
+        # Python 3.6-era jsonschema compatibility, do i really need to support it?
+        format_checker = jsonschema.draft7_format_checker
+    return jsonschema.Draft7Validator(
+        schema=schema_cls.json,
+        format_checker=format_checker,
+    )
 
 
 class MetaVersion(ABCMeta):
@@ -146,6 +164,8 @@ class Version(ABC, metaclass=MetaVersion):
     graph = None
     # A map of object names and dictionaries of their ID fields and types
     id_fields = None
+
+    # Validator compiled per-class via module-level lru_cache
 
     @classmethod
     @abstractmethod
@@ -315,15 +335,8 @@ class Version(ABC, metaclass=MetaVersion):
             `jsonschema.exceptions.ValidationError` if the data did not adhere
             to this version of the schema.
         """
-        try:
-            format_checker = jsonschema.Draft7Validator.FORMAT_CHECKER
-        except AttributeError:
-            # Nevermind, pylint: disable=fixme
-            # TODO Remove once we stop supporting Python 3.6
-            format_checker = jsonschema.draft7_format_checker
-
-        jsonschema.validate(instance=data, schema=cls.json,
-                            format_checker=format_checker)
+        # Validate using the compiled validator cached per-class
+        _build_validator_for(cls).validate(data)
         return data
 
     @classmethod
