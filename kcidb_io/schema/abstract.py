@@ -16,7 +16,8 @@ def _build_validator_for(schema_cls):
     try:
         format_checker = jsonschema.Draft7Validator.FORMAT_CHECKER
     except AttributeError:
-        # Python 3.6-era jsonschema compatibility, do i really need to support it?
+        # Python 3.6-era jsonschema compatibility,
+        # do i really need to support it?
         format_checker = jsonschema.draft7_format_checker
     return jsonschema.Draft7Validator(
         schema=schema_cls.json,
