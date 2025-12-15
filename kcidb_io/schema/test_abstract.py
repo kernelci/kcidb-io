@@ -207,3 +207,164 @@ class VersionTestCase(unittest.TestCase):
             self.assertTrue(V2A <= V2B)
         with self.assertRaises(TypeError):
             self.assertTrue(V2A >= V2B)
+
+    def test_dedup(self):
+        """Check dedup() method works correctly"""
+        class V1(Version):
+            """First version"""
+            major = 1
+            minor = 0
+            json = dict(title="v1")
+            graph = {"": ["revisions"], "revisions": ["builds"],
+                     "builds": []}
+            id_fields = dict(
+                revisions=dict(id=str),
+                builds=dict(id=str),
+            )
+
+            @classmethod
+            def _get_version(cls, data):
+                assert isinstance(data, dict)
+                version = data.get("version", {})
+                return version.get("major"), version.get("minor")
+
+            @classmethod
+            def _set_version(cls, data):
+                assert isinstance(data, dict)
+                data["version"] = dict(major=cls.major, minor=cls.minor)
+
+        class V2(V1):
+            """Second version"""
+            major = 2
+            minor = 0
+            json = dict(title="v2")
+            graph = {"": ["checkouts", "issues"], "checkouts": ["builds"],
+                     "builds": [], "issues": []}
+            id_fields = dict(
+                checkouts=dict(id=str),
+                builds=dict(id=str),
+                issues=dict(id=str, version=int),
+            )
+
+            @staticmethod
+            def _inherit(data):
+                revisions = data.pop("revisions", None)
+                if revisions is not None:
+                    data["checkouts"] = revisions
+                return data
+
+        assert V1.dedup(V1.new()) == V1.new()
+        assert V2.dedup(V1.new()) == V1.new()
+        assert V2.upgrade(V2.dedup(V1.new())) == V2.new()
+        assert V2.dedup(V2.new()) == V2.new()
+
+        data = V1.new() | dict(revisions=[], builds=[])
+        assert V1.dedup(data) == data
+        data = V1.new() | dict(
+            revisions=[dict(id="a")], builds=[dict(id="b")]
+        )
+        assert V1.dedup(data) == data
+        data = V1.new() | dict(
+            revisions=[dict(id="a", comment="A")],
+            builds=[dict(id="b", comment="B")]
+        )
+        assert V1.dedup(data) == data
+
+        data = V2.new() | dict(checkouts=[], builds=[], issues=[])
+        assert V2.dedup(data) == data
+        data = V2.new() | dict(
+            checkouts=[dict(id="a")], builds=[dict(id="b")],
+            issues=[dict(id="c", version=0xd)]
+        )
+        data = V2.new() | dict(
+            checkouts=[dict(id="a", comment="A")],
+            builds=[dict(id="b", comment="B")],
+            issues=[dict(id="c", version=0xd, comment="C")]
+        )
+        assert V2.dedup(data) == data
+
+        # Check identical duplicate objects are removed
+        assert V1.dedup(V1.new() | dict(
+            revisions=[dict(id="a", comment="A"),
+                       dict(id="alpha", comment="Alpha"),
+                       dict(id="a", comment="A")],
+            builds=[dict(id="b", comment="B"),
+                    dict(id="beta", comment="Beta"),
+                    dict(id="b", comment="B")],
+        )) == V1.new() | dict(
+            revisions=[dict(id="a", comment="A"),
+                       dict(id="alpha", comment="Alpha")],
+            builds=[dict(id="b", comment="B"),
+                    dict(id="beta", comment="Beta")],
+        )
+
+        assert V2.dedup(V2.new() | dict(
+            checkouts=[dict(id="a", comment="A"),
+                       dict(id="alpha", comment="Alpha"),
+                       dict(id="a", comment="A")],
+            builds=[dict(id="b", comment="B"),
+                    dict(id="beta", comment="Beta"),
+                    dict(id="b", comment="B")],
+            issues=[dict(id="f", version=0xf, comment="F"),
+                    dict(id="feta", version=0xf, comment="Feta"),
+                    dict(id="feta", version=0x3, comment="Feta"),
+                    dict(id="f", version=0xf, comment="F")],
+        )) == V2.new() | dict(
+            checkouts=[dict(id="a", comment="A"),
+                       dict(id="alpha", comment="Alpha")],
+            builds=[dict(id="b", comment="B"),
+                    dict(id="beta", comment="Beta")],
+            issues=[dict(id="f", version=0xf, comment="F"),
+                    dict(id="feta", version=0xf, comment="Feta"),
+                    dict(id="feta", version=0x3, comment="Feta")],
+        )
+
+        # Check field values are picked between same-ID objects
+        deduped = V2.dedup(V2.new() | dict(
+            checkouts=[dict(id="a", comment="A"),
+                       dict(id="a", comment="Alpha")],
+            builds=[dict(id="b", comment="B"),
+                    dict(id="b", comment="Beta")],
+            issues=[dict(id="f", version=0xf, comment="F"),
+                    dict(id="f", version=0xf, comment="Feta")],
+        ))
+        assert set("version checkouts builds issues".split()) == set(deduped)
+        assert all(
+            len(ol := deduped[n]) == 1 and
+            isinstance(o := ol[0], dict) and
+            o["id"] == id and
+            o["comment"] in (c1, c2)
+            for n, (id, c1, c2) in dict(
+                checkouts=("a", "A", "Alpha"),
+                builds=("b", "B", "Beta"),
+                issues=("f", "F", "Feta")
+            ).items()
+        )
+
+        # Check deterministic value picking between same-ID objects
+        deduped = V2.dedup(V2.new() | dict(
+            checkouts=[dict(id="a", comment="A"),
+                       dict(id="a", comment="Alpha")],
+            builds=[dict(id="b", comment="B"),
+                    dict(id="b", comment="Beta")],
+            issues=[dict(id="f", version=0xf, comment="F"),
+                    dict(id="f", version=0xf, comment="Feta")],
+        ), pick_second=lambda: False)
+        assert deduped == V2.new() | dict(
+            checkouts=[dict(id="a", comment="A")],
+            builds=[dict(id="b", comment="B")],
+            issues=[dict(id="f", version=0xf, comment="F")],
+        )
+        deduped = V2.dedup(V2.new() | dict(
+            checkouts=[dict(id="a", comment="A"),
+                       dict(id="a", comment="Alpha")],
+            builds=[dict(id="b", comment="B"),
+                    dict(id="b", comment="Beta")],
+            issues=[dict(id="f", version=0xf, comment="F"),
+                    dict(id="f", version=0xf, comment="Feta")],
+        ), pick_second=lambda: True)
+        assert deduped == V2.new() | dict(
+            checkouts=[dict(id="a", comment="Alpha")],
+            builds=[dict(id="b", comment="Beta")],
+            issues=[dict(id="f", version=0xf, comment="Feta")],
+        )
