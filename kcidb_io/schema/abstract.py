@@ -3,6 +3,7 @@
 from copy import deepcopy
 from abc import ABC, ABCMeta, abstractmethod
 from functools import lru_cache
+import random
 import jsonschema
 from kcidb_io.misc import LIGHT_ASSERTS, json_cmp
 
@@ -16,7 +17,8 @@ def _build_validator_for(schema_cls):
     try:
         format_checker = jsonschema.Draft7Validator.FORMAT_CHECKER
     except AttributeError:
-        # Python 3.6-era jsonschema compatibility, do i really need to support it?
+        # Python 3.6-era jsonschema compatibility,
+        # do i really need to support it?
         format_checker = jsonschema.draft7_format_checker
     return jsonschema.Draft7Validator(
         schema=schema_cls.json,
@@ -607,6 +609,65 @@ class Version(ABC, metaclass=MetaVersion):
         assert version.is_compatible_exactly(target)
         assert LIGHT_ASSERTS or version.is_valid_exactly(target)
         return target
+
+    @classmethod
+    def dedup(cls, data, copy=True, pick_second=None):
+        """
+        Deduplicate objects in a dataset of this or earlier schema version.
+
+        Objects with the same type and ID are merged pairwise and removed
+        until only one remains, which takes the list position of the first
+        one. Each top-level attribute's value is picked with the help of
+        pick_second() function parameter from either of the two objects, if
+        it's present in both. Otherwise it's taken from whichever object has
+        it.
+
+        Args:
+            data:           The dataset to deduplicate.
+            copy:           True if the data should be copied before handling.
+                            False if it should be modified in place.
+            pick_second:    A function called for each deduplicated attribute
+                            pair, without arguments. If it returns false, the
+                            first attribute's value (in object order) is
+                            picked. The second attribute's value is picked
+                            otherwise. If None, random.getrandbits(1) is used,
+                            resulting in the same deduplication logic
+                            databases are expected to employ.
+
+        Returns:
+            The deduplicated dataset.
+        """
+        version = cls.get_exactly_compatible(data)
+        assert version is not None
+        assert LIGHT_ASSERTS or version.is_valid_exactly(data)
+        if pick_second is None:
+            def pick_second():
+                return random.getrandbits(1)
+        assert callable(pick_second)
+        if copy:
+            data = deepcopy(data)
+
+        def merge_objs(first, second):
+            """Merge the second object into the first, unless the same."""
+            if first is not second:
+                for attr in first:
+                    if attr in second and pick_second():
+                        first[attr] = second[attr]
+                for attr in second:
+                    if attr not in first:
+                        first[attr] = second[attr]
+            return first
+
+        for obj_list_name in version.graph:
+            if obj_list_name in data:
+                obj_dict = {}
+                for obj in data[obj_list_name]:
+                    obj_id = tuple(map(
+                        obj.get, version.id_fields[obj_list_name]
+                    ))
+                    merge_objs(obj_dict.setdefault(obj_id, obj), obj)
+                data[obj_list_name] = list(obj_dict.values())
+        return data
 
     @classmethod
     def cmp_directly_compatible(cls, first, second):
