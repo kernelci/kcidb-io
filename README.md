@@ -12,20 +12,15 @@ Installation
 
 To install the package for the current user, run this command:
 
-    pip3 install --user <SOURCE>
+    pip3 install <SOURCE>
 
 Where `<SOURCE>` is the location of the package source, e.g. a git repo:
 
-    pip3 install --user git+https://github.com/kernelci/kcidb-io.git
+    pip3 install git+https://github.com/kernelci/kcidb-io.git
 
 or a directory path:
 
-    pip3 install --user .
-
-In any case, make sure your PATH includes the `~/.local/bin` directory, e.g.
-with:
-
-    export PATH="$PATH":~/.local/bin
+    pip3 install .
 
 Using
 -----
