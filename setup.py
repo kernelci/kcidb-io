@@ -23,7 +23,7 @@ setuptools.setup(
     version="5",
     python_requires=">=3.10",
     author="kernelci.org",
-    author_email="kernelci@groups.io",
+    author_email="kernelci@lists.linux.dev",
     description="KCIDB = Linux Kernel CI reporting - I/O data library",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
