@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=64.0.0", "wheel"]
+requires = ["setuptools>=64.0.0", "wheel", "setuptools-scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "kcidb-io"
-version = "5"
+dynamic = ["version"]
 description = "KCIDB = Linux Kernel CI reporting - I/O data library"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -32,3 +32,7 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/kernelci/kcidb-io"
+
+[tool.setuptools_scm]
+# Version will be provided via SETUPTOOLS_SCM_PRETEND_VERSION environment variable in CI.
+# Local builds without this variable will generate a dev version based on git history.
