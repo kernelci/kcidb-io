@@ -27,7 +27,7 @@ setuptools.setup(
     description="KCIDB = Linux Kernel CI reporting - I/O data library",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
-    url="https://github.com/kernelci/kcidb_io",
+    url="https://github.com/kernelci/kcidb-io",
     packages=setuptools.find_packages(),
     classifiers=[
         "Development Status :: 1 - Alpha",
