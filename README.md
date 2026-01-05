@@ -10,15 +10,15 @@ Installation
 
 `kcidb-io` requires Python v3.10 or later.
 
-To install the package for the current user, run this command:
+To install the latest version from PyPI:
 
-    pip3 install <SOURCE>
+    pip3 install kcidb-io
 
-Where `<SOURCE>` is the location of the package source, e.g. a git repo:
+To install from the git repository:
 
     pip3 install git+https://github.com/kernelci/kcidb-io.git
 
-or a directory path:
+To install from a local directory:
 
     pip3 install .
 
@@ -47,15 +47,5 @@ The latter installs the `kcidb-io` package using the modules from the source
 directory, and changes to them will be reflected immediately without the need
 to reinstall. It also installs extra development tools, such as `flake8` and
 `pylint`.
-
-Releasing
----------
-
-Before releasing make sure the README.md is up to date.
-
-To make a release tag the release commit with `v<NUMBER>`, where `<NUMBER>` is
-the next release number, e.g. `v1`. The very next commit after the tag should
-update the version number in `setup.py` to be the next one. I.e. continuing
-the above example, it should be `2`.
 
 [kcidb]: https://github.com/kernelci/kcidb/
