@@ -21,7 +21,7 @@ with open("README.md", "r", encoding="utf8") as fh:
 setuptools.setup(
     name="kcidb_io",
     version="5",
-    python_requires=">=3.6",
+    python_requires=">=3.10",
     author="kernelci.org",
     author_email="kernelci@groups.io",
     description="KCIDB = Linux Kernel CI reporting - I/O data library",
@@ -34,7 +34,7 @@ setuptools.setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GPLv2+",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.10",
         "Topic :: Software Development :: Libraries",
     ],
     install_requires=[

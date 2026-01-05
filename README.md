@@ -8,7 +8,7 @@ package for maintaining a service storing and serving that data.
 Installation
 ------------
 
-`kcidb-io` requires Python v3.6 or later.
+`kcidb-io` requires Python v3.10 or later.
 
 To install the package for the current user, run this command:
 
