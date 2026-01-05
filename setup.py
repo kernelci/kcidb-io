@@ -12,14 +12,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-"""Install kcidb_io using setuptools."""
+"""Install kcidb-io using setuptools."""
 import setuptools
 
 with open("README.md", "r", encoding="utf8") as fh:
     LONG_DESCRIPTION = fh.read()
 
 setuptools.setup(
-    name="kcidb_io",
+    name="kcidb-io",
     version="5",
     python_requires=">=3.10",
     author="kernelci.org",
