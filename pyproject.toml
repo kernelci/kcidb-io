@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=64.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kcidb-io"
+version = "5"
+description = "KCIDB = Linux Kernel CI reporting - I/O data library"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "GPL-2.0-or-later"
+authors = [
+    {name = "kernelci.org", email = "kernelci@lists.linux.dev"}
+]
+classifiers = [
+    "Development Status :: 1 - Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development :: Libraries",
+]
+dependencies = [
+    "jsonschema[format]",
+]
+
+[project.optional-dependencies]
+dev = [
+    "flake8",
+    "pylint",
+    "pytest",
+]
+
+[project.urls]
+Homepage = "https://github.com/kernelci/kcidb-io"

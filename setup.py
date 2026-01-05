@@ -12,39 +12,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-"""Install kcidb-io using setuptools."""
+"""
+Minimal setup.py shim for legacy compatibility.
+
+All package metadata is now defined in pyproject.toml.
+For modern installations, use: pip install .
+"""
 import setuptools
 
-with open("README.md", "r", encoding="utf8") as fh:
-    LONG_DESCRIPTION = fh.read()
-
-setuptools.setup(
-    name="kcidb-io",
-    version="5",
-    python_requires=">=3.10",
-    author="kernelci.org",
-    author_email="kernelci@lists.linux.dev",
-    description="KCIDB = Linux Kernel CI reporting - I/O data library",
-    long_description=LONG_DESCRIPTION,
-    long_description_content_type="text/markdown",
-    url="https://github.com/kernelci/kcidb-io",
-    packages=setuptools.find_packages(),
-    classifiers=[
-        "Development Status :: 1 - Alpha",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: GPLv2+",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.10",
-        "Topic :: Software Development :: Libraries",
-    ],
-    install_requires=[
-        "jsonschema[format]",
-    ],
-    extras_require=dict(
-        dev=[
-            "flake8",
-            "pylint",
-            "pytest",
-        ],
-    ),
-)
+# Minimal shim - setuptools will automatically read pyproject.toml
+setuptools.setup()
