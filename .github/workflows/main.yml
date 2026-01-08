@@ -71,14 +71,8 @@ jobs:
       - name: Check package with twine
         run: twine check dist/*
 
-      - name: Publish to TestPyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
-          skip-existing: true
-          verbose: true
-
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           skip-existing: true
+          verbose: true
