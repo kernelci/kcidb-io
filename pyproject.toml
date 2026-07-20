@@ -20,14 +20,14 @@ classifiers = [
     "Topic :: Software Development :: Libraries",
 ]
 dependencies = [
-    "jsonschema[format]",
+    "jsonschema[format]>=4.26.0",
 ]
 
 [project.optional-dependencies]
 dev = [
     "flake8",
-    "pylint",
-    "pytest",
+    "pylint>=0.22",
+    "pytest>=2.1",
 ]
 
 [project.urls]
